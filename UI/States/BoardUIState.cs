@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BingoMod.Common;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -12,12 +13,12 @@ namespace BingoMod.UI.States
     {
         public DraggableUIPanel boardPanel;
         public static bool visible = true;
-        public Item[] displayItems;
+        public Goal[] goals;
         internal BoardSlot[] innerPanels;
         internal bool pendingScaleChange;
 
-        public override void OnInitialize()        {
-            displayItems = new Item[25];
+        public override void OnInitialize() { 
+            goals = new Goal[25];
             innerPanels = new BoardSlot[25];
 
             boardPanel = new DraggableUIPanel();
@@ -28,9 +29,12 @@ namespace BingoMod.UI.States
             boardPanel.Height.Set((TextureAssets.InventoryBack9.Value.Height * Main.UIScale + 4) * 5 + 4, 0f);
             boardPanel.BackgroundColor = new Color(73, 94, 171);
 
-            for (int i = 0; i < 25; i++)            {
-                displayItems[i] = new Item(ItemID.Zenith);
-                innerPanels[i] = new BoardSlot(i, displayItems[i]);
+            for (int i = 0; i < 25; i++) {
+                goals[i] = new Goal(
+                    new Item(ItemID.Zenith),
+                    $"Test {i}"
+                );
+                innerPanels[i] = new BoardSlot(i, goals[i]);
                 boardPanel.Append(innerPanels[i]);
             }
 

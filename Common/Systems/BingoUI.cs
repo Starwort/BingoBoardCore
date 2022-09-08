@@ -9,6 +9,7 @@ namespace BingoMod.Common.Systems {
     public class BingoUI : ModSystem {
         internal static BoardUIState boardUI;
         internal static UserInterface _boardUI;
+        internal static string mouseText = "";
 
         public override void Load() {
             if (!Main.dedServ) {
@@ -50,6 +51,9 @@ namespace BingoMod.Common.Systems {
             }
 
             _boardUI.Update(gameTime);
+            if (mouseText.Length > 0) {
+                Main.instance.MouseText(mouseText);
+            }
         }
     }
 }
