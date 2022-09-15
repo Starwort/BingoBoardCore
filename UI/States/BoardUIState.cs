@@ -1,7 +1,6 @@
 ﻿using BingoMod.Common;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -17,7 +16,13 @@ namespace BingoMod.UI.States
         internal BoardSlot[] innerPanels;
         internal bool pendingScaleChange;
 
-        public override void OnInitialize() { 
+        public BoardUIState() : base() {
+            boardPanel = new DraggableUIPanel();
+            goals = new Goal[25];
+            innerPanels = new BoardSlot[25];
+        }
+
+        public override void OnInitialize() {
             goals = new Goal[25];
             innerPanels = new BoardSlot[25];
 
@@ -37,7 +42,6 @@ namespace BingoMod.UI.States
                 innerPanels[i] = new BoardSlot(i, goals[i]);
                 boardPanel.Append(innerPanels[i]);
             }
-
             Append(boardPanel);
         }
 
@@ -46,6 +50,9 @@ namespace BingoMod.UI.States
             if (pendingScaleChange) {
                 boardPanel.Width.Set((TextureAssets.InventoryBack9.Value.Width * Main.UIScale + 4) * 5 + 4, 0f);
                 boardPanel.Height.Set((TextureAssets.InventoryBack9.Value.Height * Main.UIScale + 4) * 5 + 4, 0f);
+                for (int i = 0; i < 25; i++) {
+                    innerPanels[i].pendingScaleChange = true;
+                }
                 pendingScaleChange = false;
             }
         }

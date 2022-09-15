@@ -11,6 +11,11 @@ namespace BingoMod.Common.Systems {
         internal static UserInterface _boardUI;
         internal static string mouseText = "";
 
+        public BingoUI() : base() {
+            boardUI = new BoardUIState();
+            _boardUI = new UserInterface();
+        }
+
         public override void Load() {
             if (!Main.dedServ) {
                 boardUI = new BoardUIState();
@@ -48,6 +53,7 @@ namespace BingoMod.Common.Systems {
 
             if (pendingScaleChange) {
                 boardUI.pendingScaleChange = true;
+                pendingScaleChange = false;
             }
 
             _boardUI.Update(gameTime);
