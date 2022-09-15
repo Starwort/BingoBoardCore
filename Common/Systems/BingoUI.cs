@@ -7,13 +7,15 @@ using Microsoft.Xna.Framework;
 
 namespace BingoMod.Common.Systems {
     public class BingoUI : ModSystem {
-        internal static BoardUIState boardUI;
-        internal static UserInterface _boardUI;
+        internal static BoardUIState? boardUI;
+        internal static UserInterface? _boardUI;
         internal static string mouseText = "";
+        internal static List<Goal>? goals;
 
         public BingoUI() : base() {
             boardUI = new BoardUIState();
             _boardUI = new UserInterface();
+            goals ??= new List<Goal>();
         }
 
         public override void Load() {
@@ -33,7 +35,7 @@ namespace BingoMod.Common.Systems {
                     new LegacyGameInterfaceLayer(
                         "BingoMod: Bingo Board UI",
                         () => {
-                            _boardUI.Draw(Main.spriteBatch, new GameTime());
+                            _boardUI?.Draw(Main.spriteBatch, new GameTime());
                             return true;
                         },
                         InterfaceScaleType.UI
@@ -51,12 +53,12 @@ namespace BingoMod.Common.Systems {
                 pendingScaleChange = true;
             }
 
-            if (pendingScaleChange) {
+            if (pendingScaleChange && boardUI is not null) {
                 boardUI.pendingScaleChange = true;
                 pendingScaleChange = false;
             }
 
-            _boardUI.Update(gameTime);
+            _boardUI?.Update(gameTime);
             if (mouseText.Length > 0) {
                 Main.instance.MouseText(mouseText);
             }

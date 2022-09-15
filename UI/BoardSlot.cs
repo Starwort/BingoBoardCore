@@ -17,12 +17,22 @@ namespace BingoMod.UI {
             get => _redCleared; 
             set  {
                 _redCleared = value;
-                cyclePosition = new LLNode<int>(
-                    3, // ChestItem, best I could do
-                    cyclePosition?.getEnd,
-                    cyclePosition
-                );
-                cycleTimer = 30;
+                if (value) {
+                    cyclePosition = new LLNode<int>(
+                        3, // ChestItem, best I could do
+                        cyclePosition?.getEnd,
+                        cyclePosition
+                    );
+                    cycleTimer = 30;
+                } else {
+                    if (cyclePosition is null) { return; }
+                    var nodeBefore = cyclePosition.findBefore(3);
+                    if (nodeBefore.next == cyclePosition) {
+                        cyclePosition = cyclePosition.next;
+                        cycleTimer = 30;
+                    }
+                    nodeBefore.next = nodeBefore.next.next;
+                }
             }
         }
         private bool _greenCleared = false;
@@ -30,13 +40,23 @@ namespace BingoMod.UI {
             get => _greenCleared;
             set {
                 _greenCleared = value;
-                cyclePosition = new LLNode<int>(
-                    18, // 8, 10, 16-20 => equipment; 18 is EquipMinecart.
-                    // There's no real difference between them when an item is in the slot
-                    cyclePosition?.getEnd,
-                    cyclePosition
-                );
-                cycleTimer = 30;
+                if (value) {
+                    cyclePosition = new LLNode<int>(
+                        18, // 8, 10, 16-20 => equipment; 18 is EquipMinecart.
+                            // There's no real difference between them when an item is in the slot
+                        cyclePosition?.getEnd,
+                        cyclePosition
+                    );
+                    cycleTimer = 30;
+                } else {
+                    if (cyclePosition is null) { return; }
+                    var nodeBefore = cyclePosition.findBefore(18);
+                    if (nodeBefore.next == cyclePosition) {
+                        cyclePosition = cyclePosition.next;
+                        cycleTimer = 30;
+                    }
+                    nodeBefore.next = nodeBefore.next.next;
+                }
             }
         }
         private bool _blueCleared = false;
@@ -44,12 +64,22 @@ namespace BingoMod.UI {
             get => _blueCleared; 
             set  {
                 _blueCleared = value;
-                cyclePosition = new LLNode<int>(
-                    31, // Count (whatever that is)
-                    cyclePosition?.getEnd,
-                    cyclePosition
-                );
-                cycleTimer = 30;
+                if (value) {
+                    cyclePosition = new LLNode<int>(
+                        31, // Count (whatever that is)
+                        cyclePosition?.getEnd,
+                        cyclePosition
+                    );
+                    cycleTimer = 30;
+                } else {
+                    if (cyclePosition is null) { return; }
+                    var nodeBefore = cyclePosition.findBefore(31);
+                    if (nodeBefore.next == cyclePosition) {
+                        cyclePosition = cyclePosition.next;
+                        cycleTimer = 30;
+                    }
+                    nodeBefore.next = nodeBefore.next.next;
+                }
             }
         }
         private bool _yellowCleared = false;
@@ -57,12 +87,22 @@ namespace BingoMod.UI {
             get => _yellowCleared; 
             set  {
                 _yellowCleared = value;
-                cyclePosition = new LLNode<int>(
-                    15, // ShopItem; ok it's not yellow but it's the best I've got
-                    cyclePosition?.getEnd,
-                    cyclePosition
-                );
-                cycleTimer = 30;
+                if (value) {
+                    cyclePosition = new LLNode<int>(
+                        15, // ShopItem; ok it's not yellow but it's the best I've got
+                        cyclePosition?.getEnd,
+                        cyclePosition
+                    );
+                    cycleTimer = 30;
+                } else {
+                    if (cyclePosition is null) { return; }
+                    var nodeBefore = cyclePosition.findBefore(15);
+                    if (nodeBefore.next == cyclePosition) {
+                        cyclePosition = cyclePosition.next;
+                        cycleTimer = 30;
+                    }
+                    nodeBefore.next = nodeBefore.next.next;
+                }
             }
         }
         private bool _pinkCleared = false;
@@ -70,12 +110,22 @@ namespace BingoMod.UI {
             get => _pinkCleared;
             set {
                 _pinkCleared = value;
-                cyclePosition = new LLNode<int>(
-                    4, // BankItem - not perfect but pretty good
-                    cyclePosition?.getEnd,
-                    cyclePosition
-                );
-                cycleTimer = 30;
+                if (value) {
+                    cyclePosition = new LLNode<int>(
+                        4, // BankItem - not perfect but pretty good
+                        cyclePosition?.getEnd,
+                        cyclePosition
+                    );
+                    cycleTimer = 30;
+                } else {
+                    if (cyclePosition is null) { return; }
+                    var nodeBefore = cyclePosition.findBefore(4);
+                    if (nodeBefore.next == cyclePosition) {
+                        cyclePosition = cyclePosition.next;
+                        cycleTimer = 30;
+                    }
+                    nodeBefore.next = nodeBefore.next.next;
+                    }
             }
         }
         internal Goal goal;
@@ -122,8 +172,8 @@ namespace BingoMod.UI {
 
         public override void Update(GameTime gameTime) {
             if (pendingScaleChange) {
-                Top.Set((index / 5) * (TextureAssets.InventoryBack9.Value.Height * Main.UIScale + 4) + 2, 0f);
-                Left.Set((index % 5) * (TextureAssets.InventoryBack9.Value.Width * Main.UIScale + 4) + 2, 0f);
+                Top.Set((index / 5) * (TextureAssets.InventoryBack9.Value.Height * Main.UIScale + 4) + 4, 0f);
+                Left.Set((index % 5) * (TextureAssets.InventoryBack9.Value.Width * Main.UIScale + 4) + 4, 0f);
                 Width.Set(TextureAssets.InventoryBack9.Value.Width * Main.UIScale, 0f);
                 Height.Set(TextureAssets.InventoryBack9.Value.Height * Main.UIScale, 0f);
                 pendingScaleChange = false;
