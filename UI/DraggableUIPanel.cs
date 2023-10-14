@@ -5,14 +5,8 @@ using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 
-// https://github.com/tModLoader/tModLoader/blob/master/ExampleMod/UI/DragableUIPanel.cs
 namespace BingoBoardCore.UI {
-    // This DraggableUIPanel class inherits from UIPanel. 
-    // Inheriting is a great tool for UI design. By inheriting, we get the background drawing for free from UIPanel
-    // We've added some code to allow the panel to be dragged around. 
-    // We've also added some code to ensure that the panel will bounce back into bounds if it is dragged outside or the screen resizes.
-    // UIPanel does not prevent the player from using items when the mouse is clicked, so we've added that as well.
-    internal class DraggableUIPanel : UIPanel {
+    internal class DraggableUIPanel : UIElement {
         // Stores the offset from the top left of the UIPanel while dragging.
         private Vector2 offset;
         public bool dragging;
@@ -43,15 +37,12 @@ namespace BingoBoardCore.UI {
         }
 
         public override void Update(GameTime gameTime) {
-            base.Update(gameTime); // don't remove.
-
-            // Checking ContainsPoint and then setting mouseInterface to true is very common. This causes clicks on this UIElement to not cause the player to use current items. 
-            if (ContainsPoint(Main.MouseScreen)) {
+            base.Update(gameTime);
+            if (this.ContainsPoint(Main.MouseScreen)) {
                 Main.LocalPlayer.mouseInterface = true;
             }
-
             if (dragging) {
-                Left.Set(Main.mouseX - offset.X, 0f); // Main.MouseScreen.X and Main.mouseX are the same.
+                Left.Set(Main.mouseX - offset.X, 0f);
                 Top.Set(Main.mouseY - offset.Y, 0f);
                 Recalculate();
             }
@@ -65,13 +56,8 @@ namespace BingoBoardCore.UI {
             }
         }
 
-        // for whatever reason, TextureAssets.MagicPixel.Value is 1000px tall, or 62.5 tiles
-        // normalise that so the texture draws at a reasonable scale
-
         protected override void DrawSelf(SpriteBatch spriteBatch) {
-            //base.DrawSelf(spriteBatch);
-            //drawRectangle(spriteBatch, new Rectangle(400, 400, 200, 200), Color.Red);
-            drawRectangle(spriteBatch, this.GetDimensions().ToRectangle(), Color.Gray);
+            drawRectangle(spriteBatch, this.GetDimensions().ToRectangle(), new Color(73, 94, 171));
         }
     }
 }

@@ -1,29 +1,27 @@
 ﻿using BingoBoardCore.Common;
+using BingoBoardCore.Common.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Diagnostics;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.UI;
 
-namespace BingoBoardCore.UI.States
-{
-    internal class BoardUIState : UIState
-    {
+namespace BingoBoardCore.UI.States {
+    internal class BoardUIState : UIState {
         public DraggableUIPanel boardPanel;
-        public static bool visible = true;
-        public Goal[] goals;
+        public bool visible = true;
         internal BoardSlot[] innerPanels;
         internal bool pendingScaleChange;
 
         public BoardUIState() : base() {
             boardPanel = new DraggableUIPanel();
-            goals = new Goal[25];
             innerPanels = new BoardSlot[25];
         }
 
-        public override void OnInitialize() {
-            goals = new Goal[25];
+        public void setupUI(GoalState[] goals) {
+            Debug.Assert(goals.Length == 25);
             innerPanels = new BoardSlot[25];
 
             boardPanel = new DraggableUIPanel();
@@ -32,17 +30,13 @@ namespace BingoBoardCore.UI.States
             boardPanel.Top.Set(100f, 0f);
             boardPanel.Width.Set((TextureAssets.InventoryBack9.Value.Width * Main.UIScale + 4) * 5 + 4, 0f);
             boardPanel.Height.Set((TextureAssets.InventoryBack9.Value.Height * Main.UIScale + 4) * 5 + 4, 0f);
-            boardPanel.BackgroundColor = new Color(73, 94, 171);
 
             for (int i = 0; i < 25; i++) {
-                goals[i] = new Goal(
-                    new Item(ItemID.Zenith),
-                    $"Test {i}"
-                );
                 innerPanels[i] = new BoardSlot(i, goals[i]);
                 boardPanel.Append(innerPanels[i]);
             }
             Append(boardPanel);
+            this.visible = true;
         }
 
         public override void Update(GameTime gameTime) {
@@ -58,7 +52,9 @@ namespace BingoBoardCore.UI.States
         }
 
         public override void Draw(SpriteBatch spriteBatch) {
-            base.Draw(spriteBatch);
+            if (this.visible) {
+                base.Draw(spriteBatch);
+            }
         }
     }
 }

@@ -10,6 +10,8 @@ using Microsoft.Xna.Framework;
 
 namespace BingoBoardCore.Util {
     internal static class DrawingHelper {
+        // for whatever reason, TextureAssets.MagicPixel.Value is 1000px tall, or 62.5 tiles
+        // normalise that so the texture draws at a reasonable scale
         static Vector2 normaliseVector = new(1, 0.001f);
         public static void drawRectangle(SpriteBatch spriteBatch, Rectangle rect, Color colour) {
             var pos = rect.TopLeft();

@@ -5,6 +5,7 @@ using BingoBoardCore.UI;
 using BingoBoardCore.UI.States;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Terraria;
 using Terraria.Enums;
 using Terraria.ModLoader;
@@ -13,23 +14,27 @@ using Terraria.UI;
 namespace BingoBoardCore
 {
     public class BingoBoardCore : Mod {
-        public static BingoBoardCore? instance;
-
         public static string GithubUserName => "Starwort";
         public static string GithubProjectName => "BingoBoardCore";
 
-        public static void addGoals(IEnumerable<Goal> goals) {
-            BingoBoardSystem.allGoals ??= new List<Goal>();
-            foreach (Goal goal in goals) {
-                BingoBoardSystem.allGoals.Add(goal);
+        public void addGoals(IEnumerable<(string, Goal)> goals) {
+            foreach ((string id, Goal goal) data in goals) {
+                this.addGoal(data.id, data.goal);
             }
         }
 
-        public static void triggerGoal(Goal goal, Team team) {
-            if (BingoBoardSystem.boardUI is null) {
-                throw new InvalidOperationException("boardUI is null");
+        public void addGoal(string goalId, Goal goal) {
+            var system = ModContent.GetInstance<BingoBoardSystem>();
+            Debug.Assert(!system.allGoals.ContainsKey(goalId));
+            system.allGoals[goalId] = goal;
+        }
+
+        public void triggerGoal(Goal goal, Team team) {
+            var system = ModContent.GetInstance<BingoBoardSystem>();
+            if (system.activeGoals is null) {
+                throw new InvalidOperationException("activeGoals is null");
             }
-            foreach (BoardSlot slot in BingoBoardSystem.boardUI.innerPanels) {
+            foreach (GoalState slot in system.activeGoals) {
                 if (slot.goal.id == goal.id) {
                     switch (team) {
                         case Team.None: throw new ArgumentOutOfRangeException(nameof(team), "team must not be None");
@@ -42,12 +47,6 @@ namespace BingoBoardCore
                     return;
                 }
             }
-        }
-
-        public override void Load() {
-            Logger.InfoFormat("{0} loading start", Name);
-            instance = this;
-            Logger.InfoFormat("{0} loading finish", Name);
         }
     }
 }

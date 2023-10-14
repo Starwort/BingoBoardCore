@@ -4,20 +4,35 @@ using Terraria;
 using Terraria.UI;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using System.Collections;
+using Terraria.ID;
 
 namespace BingoBoardCore.Common.Systems {
+    internal class GoalState {
+        public GoalState(Goal goal) {
+            this.goal = goal;
+            redCleared = greenCleared = blueCleared = yellowCleared = pinkCleared = false;
+        }
+
+        public Goal goal;
+        public bool redCleared;
+        public bool greenCleared;
+        public bool blueCleared;
+        public bool yellowCleared;
+        public bool pinkCleared;
+    }
     public class BingoBoardSystem : ModSystem {
-        internal static BoardUIState? boardUI;
-        internal static UserInterface? _boardUI;
-        internal static string mouseText = "";
-        internal static List<Goal>? allGoals;
-        private Goal[] activeGoals;
+        internal BoardUIState boardUI;
+        internal UserInterface _boardUI;
+        internal string mouseText = "";
+        internal Dictionary<string, Goal> allGoals = new();
+        internal GoalState[]? activeGoals;
 
         public BingoBoardSystem() : base() {
             boardUI = new BoardUIState();
             _boardUI = new UserInterface();
-            allGoals ??= new List<Goal>();
-            activeGoals = new Goal[0];
+            activeGoals = null;
+            allGoals.Clear();
         }
 
         public override void Load() {
@@ -46,8 +61,8 @@ namespace BingoBoardCore.Common.Systems {
             }
         }
 
-        internal static bool pendingScaleChange = false;
-        internal static float lastKnownUIScale = -1;
+        internal bool pendingScaleChange = false;
+        internal float lastKnownUIScale = -1;
 
         public override void UpdateUI(GameTime gameTime) {
             if (lastKnownUIScale != Main.UIScale) {
@@ -64,6 +79,24 @@ namespace BingoBoardCore.Common.Systems {
             if (mouseText.Length > 0) {
                 Main.instance.MouseText(mouseText);
             }
+        }
+
+        public void createBingoBoard() {
+            activeGoals = new GoalState[25];
+
+            for (int i = 0; i < 25; i++) {
+                activeGoals[i] = new(new Goal(
+                    new Item(ItemID.Zenith),
+                    $"Test {i}"
+                ));
+            }
+
+            boardUI.setupUI(activeGoals);
+        }
+
+        public void destroyBingoBoard() {
+            activeGoals = null;
+            boardUI.visible = false;
         }
     }
 }
