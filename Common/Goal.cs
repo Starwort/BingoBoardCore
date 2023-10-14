@@ -1,7 +1,7 @@
 ﻿using System;
 using Terraria;
 
-namespace BingoMod.Common {
+namespace BingoBoardCore.Common {
     public sealed class Goal {
         public readonly Item icon;
         public readonly string description;

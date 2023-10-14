@@ -1,6 +1,6 @@
 ﻿using Terraria.ModLoader;
 
-namespace BingoMod.Commands {
+namespace BingoBoardCore.Commands {
     internal class LockoutCommand : ModCommand {
         public override string Command => "lockout";
 

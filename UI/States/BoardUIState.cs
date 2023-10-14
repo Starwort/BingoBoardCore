@@ -1,4 +1,4 @@
-﻿using BingoMod.Common;
+﻿using BingoBoardCore.Common;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -6,7 +6,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.UI;
 
-namespace BingoMod.UI.States
+namespace BingoBoardCore.UI.States
 {
     internal class BoardUIState : UIState
     {

@@ -1,7 +1,8 @@
-using BingoMod.Common;
-using BingoMod.Common.Systems;
-using BingoMod.UI;
-using BingoMod.UI.States;
+global using static BingoBoardCore.Util.DrawingHelper;
+using BingoBoardCore.Common;
+using BingoBoardCore.Common.Systems;
+using BingoBoardCore.UI;
+using BingoBoardCore.UI.States;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -9,27 +10,27 @@ using Terraria.Enums;
 using Terraria.ModLoader;
 using Terraria.UI;
 
-namespace BingoMod
+namespace BingoBoardCore
 {
-    public class BingoMod : Mod {
-        public static BingoMod? instance;
+    public class BingoBoardCore : Mod {
+        public static BingoBoardCore? instance;
 
         public static string GithubUserName => "Starwort";
-        public static string GithubProjectName => "BingoMod";
+        public static string GithubProjectName => "BingoBoardCore";
 
         public static void addGoals(IEnumerable<Goal> goals) {
-            BingoUI.goals ??= new List<Goal>();
+            BingoBoardSystem.allGoals ??= new List<Goal>();
             foreach (Goal goal in goals) {
-                BingoUI.goals.Add(goal);
+                BingoBoardSystem.allGoals.Add(goal);
             }
         }
 
-        public static void triggerGoal(int goalId, Team team) {
-            if (BingoUI.boardUI is null) {
+        public static void triggerGoal(Goal goal, Team team) {
+            if (BingoBoardSystem.boardUI is null) {
                 throw new InvalidOperationException("boardUI is null");
             }
-            foreach (BoardSlot slot in BingoUI.boardUI.innerPanels) {
-                if (slot.goal.id == goalId) {
+            foreach (BoardSlot slot in BingoBoardSystem.boardUI.innerPanels) {
+                if (slot.goal.id == goal.id) {
                     switch (team) {
                         case Team.None: throw new ArgumentOutOfRangeException(nameof(team), "team must not be None");
                         case Team.Red: slot.redCleared = true; break;

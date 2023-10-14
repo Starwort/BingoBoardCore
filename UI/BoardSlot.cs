@@ -1,21 +1,23 @@
-﻿using BingoMod.Common;
-using BingoMod.Common.Systems;
-using BingoMod.Util;
+﻿using BingoBoardCore.Common;
+using BingoBoardCore.Common.Systems;
+using BingoBoardCore.Util;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.Localization;
 using Terraria.UI;
 
-namespace BingoMod.UI {
+namespace BingoBoardCore.UI {
     internal class BoardSlot : UIElement {
         public readonly int index;
         private Item displayItem;
         private bool _redCleared = false;
         public bool redCleared {
-            get => _redCleared; 
-            set  {
+            get => _redCleared;
+            set {
                 _redCleared = value;
                 if (value) {
                     cyclePosition = new LLNode<int>(
@@ -25,7 +27,9 @@ namespace BingoMod.UI {
                     );
                     cycleTimer = 30;
                 } else {
-                    if (cyclePosition is null) { return; }
+                    if (cyclePosition is null) {
+                        return;
+                    }
                     var nodeBefore = cyclePosition.findBefore(3);
                     if (nodeBefore.next == cyclePosition) {
                         cyclePosition = cyclePosition.next;
@@ -49,7 +53,9 @@ namespace BingoMod.UI {
                     );
                     cycleTimer = 30;
                 } else {
-                    if (cyclePosition is null) { return; }
+                    if (cyclePosition is null) {
+                        return;
+                    }
                     var nodeBefore = cyclePosition.findBefore(18);
                     if (nodeBefore.next == cyclePosition) {
                         cyclePosition = cyclePosition.next;
@@ -61,8 +67,8 @@ namespace BingoMod.UI {
         }
         private bool _blueCleared = false;
         public bool blueCleared {
-            get => _blueCleared; 
-            set  {
+            get => _blueCleared;
+            set {
                 _blueCleared = value;
                 if (value) {
                     cyclePosition = new LLNode<int>(
@@ -72,7 +78,9 @@ namespace BingoMod.UI {
                     );
                     cycleTimer = 30;
                 } else {
-                    if (cyclePosition is null) { return; }
+                    if (cyclePosition is null) {
+                        return;
+                    }
                     var nodeBefore = cyclePosition.findBefore(31);
                     if (nodeBefore.next == cyclePosition) {
                         cyclePosition = cyclePosition.next;
@@ -84,8 +92,8 @@ namespace BingoMod.UI {
         }
         private bool _yellowCleared = false;
         public bool yellowCleared {
-            get => _yellowCleared; 
-            set  {
+            get => _yellowCleared;
+            set {
                 _yellowCleared = value;
                 if (value) {
                     cyclePosition = new LLNode<int>(
@@ -95,7 +103,9 @@ namespace BingoMod.UI {
                     );
                     cycleTimer = 30;
                 } else {
-                    if (cyclePosition is null) { return; }
+                    if (cyclePosition is null) {
+                        return;
+                    }
                     var nodeBefore = cyclePosition.findBefore(15);
                     if (nodeBefore.next == cyclePosition) {
                         cyclePosition = cyclePosition.next;
@@ -118,28 +128,30 @@ namespace BingoMod.UI {
                     );
                     cycleTimer = 30;
                 } else {
-                    if (cyclePosition is null) { return; }
+                    if (cyclePosition is null) {
+                        return;
+                    }
                     var nodeBefore = cyclePosition.findBefore(4);
                     if (nodeBefore.next == cyclePosition) {
                         cyclePosition = cyclePosition.next;
                         cycleTimer = 30;
                     }
                     nodeBefore.next = nodeBefore.next.next;
-                    }
+                }
             }
         }
         internal Goal goal;
         private int cycleTimer = -1;
         private LLNode<int>? cyclePosition = null;
         internal bool pendingScaleChange = false;
+        internal bool isMarked;
 
         public BoardSlot(int index, Goal goal) {
             this.index = index;
 
             displayItem = goal.icon;
-            // hack to remove the number 1 and selection highlight
-            // you can probably trick the highlight into coming back via auto select though
             this.goal = goal;
+            this.isMarked = false;
 
             Top.Set((index / 5) * (TextureAssets.InventoryBack9.Value.Height * Main.UIScale + 4) + 2, 0f);
             Left.Set((index % 5) * (TextureAssets.InventoryBack9.Value.Width * Main.UIScale + 4) + 2, 0f);
@@ -148,26 +160,26 @@ namespace BingoMod.UI {
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch) {
-            Vector2 origin = GetDimensions().Position();
-            float tmp = Main.inventoryScale;
-            Main.inventoryScale = Main.UIScale;
-            int context;
-            if (cyclePosition is not null) {
-                if (cycleTimer-- == 0) {
-                    cyclePosition = cyclePosition.next;
-                    cycleTimer = 30;
-                }
-                context = cyclePosition.value;
-            } else {
-                context = 28; // GoldDebug. Highlights when hovered
+            var dims = this.GetDimensions();
+            Vector2 origin = dims.Center();
+            var possibleColours = new List<Color>();
+            if (this.redCleared) { possibleColours.Add(Color.Red); }
+            if (this.greenCleared) { possibleColours.Add(Color.Green); }
+            if (this.blueCleared) { possibleColours.Add(Color.Blue); }
+            if (this.yellowCleared) { possibleColours.Add(Color.Yellow); }
+            if (this.pinkCleared) { possibleColours.Add(Color.Pink); }
+            if (possibleColours.Count == 0) {
+                possibleColours.Add(Color.Gray);
             }
-            ItemSlot.Draw(
-                spriteBatch,
-                ref displayItem,
-                context,
-                origin
-            );
-            Main.inventoryScale = tmp;
+            drawRectangle(spriteBatch, this.GetDimensions().ToRectangle(), possibleColours[(int)((Main.GameUpdateCount / 30) % possibleColours.Count)]);
+            Main.DrawItemIcon(spriteBatch, displayItem, origin, Color.White, this.GetDimensions().Width - 8);
+            if (this.isMarked) {
+                var starTexture = TextureAssets.Item[ItemID.FallenStar].Value;
+                var starAnim = Main.itemAnimations[ItemID.FallenStar];
+                spriteBatch.Draw(starTexture, new Rectangle((int) origin.X + 8, (int) origin.Y + 8, 16, 16),
+                    starAnim.GetFrame(starTexture),
+                    Color.White);
+            }
         }
 
         public override void Update(GameTime gameTime) {
@@ -180,12 +192,16 @@ namespace BingoMod.UI {
             }
         }
 
+        public override void RightMouseDown(UIMouseEvent evt) {
+            this.isMarked = !this.isMarked;
+        }
+
         public override void MouseOver(UIMouseEvent evt) {
-            BingoUI.mouseText = Language.GetTextValue(goal.description);
+            BingoBoardSystem.mouseText = Language.GetTextValue(goal.description);
         }
 
         public override void MouseOut(UIMouseEvent evt) {
-            BingoUI.mouseText = "";
+            BingoBoardSystem.mouseText = "";
         }
     }
 }

@@ -1,21 +1,23 @@
 ﻿using Terraria.ModLoader;
-using BingoMod.UI.States;
+using BingoBoardCore.UI.States;
 using Terraria;
 using Terraria.UI;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace BingoMod.Common.Systems {
-    public class BingoUI : ModSystem {
+namespace BingoBoardCore.Common.Systems {
+    public class BingoBoardSystem : ModSystem {
         internal static BoardUIState? boardUI;
         internal static UserInterface? _boardUI;
         internal static string mouseText = "";
-        internal static List<Goal>? goals;
+        internal static List<Goal>? allGoals;
+        private Goal[] activeGoals;
 
-        public BingoUI() : base() {
+        public BingoBoardSystem() : base() {
             boardUI = new BoardUIState();
             _boardUI = new UserInterface();
-            goals ??= new List<Goal>();
+            allGoals ??= new List<Goal>();
+            activeGoals = new Goal[0];
         }
 
         public override void Load() {
@@ -33,7 +35,7 @@ namespace BingoMod.Common.Systems {
                 layers.Insert(
                     inventoryIndex + 1,
                     new LegacyGameInterfaceLayer(
-                        "BingoMod: Bingo Board UI",
+                        "BingoBoardCore: Bingo Board UI",
                         () => {
                             _boardUI?.Draw(Main.spriteBatch, new GameTime());
                             return true;

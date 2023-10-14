@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BingoMod.Util {
+namespace BingoBoardCore.Util {
     /// <summary>
     ///  Singly-linked list node helper
     /// </summary>

@@ -1,1 +1,1 @@
-# BingoMod
+# Bingo Board Core

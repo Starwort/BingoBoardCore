@@ -1,7 +1,7 @@
-﻿using BingoMod.Common.Systems;
+﻿using BingoBoardCore.Common.Systems;
 using Terraria.ModLoader;
 
-namespace BingoMod.Commands {
+namespace BingoBoardCore.Commands {
     internal class BoardDebugCommand : ModCommand {
         public override string Command => "debugboard";
 
@@ -19,22 +19,22 @@ namespace BingoMod.Commands {
                 caller.Reply("goal ID must be in range [0,25)");
                 return;
             }
-            if (BingoUI.boardUI is null) { return; }
+            if (BingoBoardSystem.boardUI is null) { return; }
             switch (args[1]) {
                 case "red":
-                    BingoUI.boardUI.innerPanels[id].redCleared = !BingoUI.boardUI.innerPanels[id].redCleared;
+                    BingoBoardSystem.boardUI.innerPanels[id].redCleared = !BingoBoardSystem.boardUI.innerPanels[id].redCleared;
                     break;
                 case "green":
-                    BingoUI.boardUI.innerPanels[id].greenCleared = !BingoUI.boardUI.innerPanels[id].greenCleared;
+                    BingoBoardSystem.boardUI.innerPanels[id].greenCleared = !BingoBoardSystem.boardUI.innerPanels[id].greenCleared;
                     break;
                 case "blue":
-                    BingoUI.boardUI.innerPanels[id].blueCleared = !BingoUI.boardUI.innerPanels[id].blueCleared;
+                    BingoBoardSystem.boardUI.innerPanels[id].blueCleared = !BingoBoardSystem.boardUI.innerPanels[id].blueCleared;
                     break;
                 case "yellow":
-                    BingoUI.boardUI.innerPanels[id].yellowCleared = !BingoUI.boardUI.innerPanels[id].yellowCleared;
+                    BingoBoardSystem.boardUI.innerPanels[id].yellowCleared = !BingoBoardSystem.boardUI.innerPanels[id].yellowCleared;
                     break;
                 case "pink":
-                    BingoUI.boardUI.innerPanels[id].pinkCleared = !BingoUI.boardUI.innerPanels[id].pinkCleared;
+                    BingoBoardSystem.boardUI.innerPanels[id].pinkCleared = !BingoBoardSystem.boardUI.innerPanels[id].pinkCleared;
                     break;
                 default:
                     caller.Reply("team colour must be one of red,green,blue,yellow,pink");

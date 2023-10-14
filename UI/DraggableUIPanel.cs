@@ -1,10 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 
 // https://github.com/tModLoader/tModLoader/blob/master/ExampleMod/UI/DragableUIPanel.cs
-namespace BingoMod.UI {
+namespace BingoBoardCore.UI {
     // This DraggableUIPanel class inherits from UIPanel. 
     // Inheriting is a great tool for UI design. By inheriting, we get the background drawing for free from UIPanel
     // We've added some code to allow the panel to be dragged around. 
@@ -15,13 +17,13 @@ namespace BingoMod.UI {
         private Vector2 offset;
         public bool dragging;
 
-        public override void MouseDown(UIMouseEvent evt) {
-            base.MouseDown(evt);
+        public override void LeftMouseDown(UIMouseEvent evt) {
+            base.LeftMouseDown(evt);
             DragStart(evt);
         }
 
-        public override void MouseUp(UIMouseEvent evt) {
-            base.MouseUp(evt);
+        public override void LeftMouseUp(UIMouseEvent evt) {
+            base.LeftMouseUp(evt);
             DragEnd(evt);
         }
 
@@ -54,16 +56,22 @@ namespace BingoMod.UI {
                 Recalculate();
             }
 
-            // Here we check if the DragableUIPanel is outside the Parent UIElement rectangle. 
-            // (In our example, the parent would be ExampleUI, a UIState. This means that we are checking that the DragableUIPanel is outside the whole screen)
-            // By doing this and some simple math, we can snap the panel back on screen if the user resizes his window or otherwise changes resolution.
+            // If off the screen, snap back onto the screen
             var parentSpace = Parent.GetDimensions().ToRectangle();
-            if (!GetDimensions().ToRectangle().Intersects(parentSpace)) {
+            if (!parentSpace.Contains(GetDimensions().ToRectangle())) {
                 Left.Pixels = Utils.Clamp(Left.Pixels, 0, parentSpace.Right - Width.Pixels);
                 Top.Pixels = Utils.Clamp(Top.Pixels, 0, parentSpace.Bottom - Height.Pixels);
-                // Recalculate forces the UI system to do the positioning math again.
                 Recalculate();
             }
+        }
+
+        // for whatever reason, TextureAssets.MagicPixel.Value is 1000px tall, or 62.5 tiles
+        // normalise that so the texture draws at a reasonable scale
+
+        protected override void DrawSelf(SpriteBatch spriteBatch) {
+            //base.DrawSelf(spriteBatch);
+            //drawRectangle(spriteBatch, new Rectangle(400, 400, 200, 200), Color.Red);
+            drawRectangle(spriteBatch, this.GetDimensions().ToRectangle(), Color.Gray);
         }
     }
 }
