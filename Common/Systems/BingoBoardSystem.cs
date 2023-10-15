@@ -6,21 +6,35 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System.Collections;
 using Terraria.ID;
+using System.IO;
+using System.Diagnostics;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Terraria.Localization;
+using System.Linq;
+using Terraria.Chat;
 
 namespace BingoBoardCore.Common.Systems {
     internal class GoalState {
         public GoalState(Goal goal) {
             this.goal = goal;
-            redCleared = greenCleared = blueCleared = yellowCleared = pinkCleared = false;
         }
 
         public Goal goal;
-        public bool redCleared;
-        public bool greenCleared;
-        public bool blueCleared;
-        public bool yellowCleared;
-        public bool pinkCleared;
+        public bool redCleared = false;
+        public bool greenCleared = false;
+        public bool blueCleared = false;
+        public bool yellowCleared = false;
+        public bool pinkCleared = false;
+        public bool whiteCleared = false;
     }
+
+    public enum BingoMode {
+        Bingo,
+        TripleBingo,
+        Blackout,
+        Lockout,
+    }
+
     public class BingoBoardSystem : ModSystem {
         internal BoardUIState boardUI;
         internal UserInterface _boardUI;
@@ -33,6 +47,7 @@ namespace BingoBoardCore.Common.Systems {
             _boardUI = new UserInterface();
             activeGoals = null;
             allGoals.Clear();
+            mode = BingoMode.Bingo;
         }
 
         public override void Load() {
@@ -81,22 +96,95 @@ namespace BingoBoardCore.Common.Systems {
             }
         }
 
-        public void createBingoBoard() {
+        internal void announce(Color colour, string text, params string[] substitutions) {
+            if (Main.netMode == NetmodeID.Server) {
+                ChatHelper.BroadcastChatMessage(
+                    NetworkText.FromKey(text, substitutions.Select(text =>
+                        NetworkText.FromKey(text)
+                    ).ToArray()), colour);
+            } else {
+                Main.NewText(
+                    Language.GetTextValue(text, substitutions.Select(text =>
+                        Language.GetTextValue(text)
+                    ).ToArray()), colour);
+            }
+        }
+
+        internal BingoMode mode;
+
+        public void generateBingoBoard(BingoMode mode) {
             activeGoals = new GoalState[25];
+            this.mode = mode;
 
             for (int i = 0; i < 25; i++) {
-                activeGoals[i] = new(new Goal(
-                    new Item(ItemID.Zenith),
-                    $"Test {i}"
-                ));
+                activeGoals[i] = new(this.allGoals[$"BingoBoardCore.TestGoal{i}"]);
             }
 
-            boardUI.setupUI(activeGoals);
+            sync();
         }
 
         public void destroyBingoBoard() {
             activeGoals = null;
-            boardUI.visible = false;
+            sync();
+        }
+
+        internal void syncUI() {
+            if (!Main.dedServ) {
+                boardUI.visible = activeGoals is not null;
+                if (boardUI.visible) {
+                    Debug.Assert(activeGoals is not null); // fix null warning
+                    boardUI.setupUI(activeGoals);
+                }
+            }
+        }
+
+        internal void sync() {
+            NetMessage.SendData(MessageID.WorldData);
+            syncUI();
+        }
+
+        public override void NetReceive(BinaryReader reader) {
+            var goals = reader.ReadBoolean();
+            boardUI.visible = goals;
+            if (!goals) {
+                this.activeGoals = null;
+                return;
+            }
+            this.activeGoals = new GoalState[25];
+            this.mode = (BingoMode) reader.ReadByte();
+            for (int i = 0; i < 25; i++) {
+                var goalId = reader.ReadString();
+                var state = new GoalState(this.allGoals[goalId]);
+                var packedClear = reader.ReadByte();
+                state.redCleared = (packedClear & (1 << 0)) != 0;
+                state.greenCleared = (packedClear & (1 << 1)) != 0;
+                state.blueCleared = (packedClear & (1 << 2)) != 0;
+                state.yellowCleared = (packedClear & (1 << 3)) != 0;
+                state.pinkCleared = (packedClear & (1 << 4)) != 0;
+                state.whiteCleared = (packedClear & (1 << 5)) != 0;
+                this.activeGoals[i] = state;
+            }
+            syncUI();
+        }
+
+        public override void NetSend(BinaryWriter writer) {
+            writer.Write(activeGoals is not null);
+            if (activeGoals is null) {
+                return;
+            }
+            Debug.Assert(activeGoals.Length == 25);
+            writer.Write((byte) this.mode);
+            foreach (var goal in activeGoals) {
+                writer.Write(goal.goal.id);
+                byte packedClear = 0;
+                packedClear |= (byte) (goal.redCleared ? 1 << 0 : 0);
+                packedClear |= (byte) (goal.greenCleared ? 1 << 1 : 0);
+                packedClear |= (byte) (goal.blueCleared ? 1 << 2 : 0);
+                packedClear |= (byte) (goal.yellowCleared ? 1 << 3 : 0);
+                packedClear |= (byte) (goal.pinkCleared ? 1 << 4 : 0);
+                packedClear |= (byte) (goal.whiteCleared ? 1 << 5 : 0);
+                writer.Write(packedClear);
+            }
         }
     }
 }

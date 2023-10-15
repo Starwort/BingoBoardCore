@@ -34,24 +34,36 @@ namespace BingoBoardCore.UI {
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch) {
-            var activeGoals = ModContent.GetInstance<BingoBoardSystem>().activeGoals;
-            if (activeGoals is null) {
+            // skip drawing if activegoals has been disposed
+            var system = ModContent.GetInstance<BingoBoardSystem>();
+            if (system.activeGoals is null) {
                 return;
             }
             var dims = this.GetDimensions();
             Vector2 origin = dims.Center();
             var possibleColours = new List<Color>();
-            if (goalState.redCleared) { possibleColours.Add(Color.Red); }
-            if (goalState.greenCleared) { possibleColours.Add(Color.Green); }
-            if (goalState.blueCleared) { possibleColours.Add(Color.Blue); }
-            if (goalState.yellowCleared) { possibleColours.Add(Color.Yellow); }
-            if (goalState.pinkCleared) { possibleColours.Add(Color.Pink); }
-            if (possibleColours.Count == 0) {
-                possibleColours.Add(new Color(73, 94, 171));
+            if (goalState.redCleared) {
+                possibleColours.Add(Main.teamColor[1]);
             }
-            drawRectangle(spriteBatch, this.GetDimensions().ToRectangle(), possibleColours[(int)((Main.GameUpdateCount / 30) % possibleColours.Count)]);
+            if (goalState.greenCleared) {
+                possibleColours.Add(Main.teamColor[2]);
+            }
+            if (goalState.blueCleared) {
+                possibleColours.Add(Main.teamColor[3]);
+            }
+            if (goalState.yellowCleared) {
+                possibleColours.Add(Main.teamColor[4]);
+            }
+            if (goalState.pinkCleared) {
+                possibleColours.Add(Main.teamColor[5]);
+            }
+            if (goalState.whiteCleared) {
+                possibleColours.Add(Main.teamColor[0]);
+            }
+            var chosenColour = possibleColours.Count == 0 ? new Color(73, 94, 171) : possibleColours[(int) ((Main.GameUpdateCount / 60) % possibleColours.Count)];
+            drawRectangle(spriteBatch, this.GetDimensions().ToRectangle(), chosenColour);
             Main.DrawItemIcon(spriteBatch, displayItem, origin, Color.White, this.GetDimensions().Width - 8);
-            if (this.isMarked) {
+            if (this.isMarked && (possibleColours.Count == 0 || system.mode != BingoMode.Lockout)) {
                 var starTexture = TextureAssets.Item[ItemID.FallenStar].Value;
                 var starAnim = Main.itemAnimations[ItemID.FallenStar];
                 spriteBatch.Draw(starTexture, new Rectangle((int) origin.X + 8, (int) origin.Y + 8, 16, 16),
@@ -75,7 +87,7 @@ namespace BingoBoardCore.UI {
         }
 
         public override void MouseOver(UIMouseEvent evt) {
-            ModContent.GetInstance<BingoBoardSystem>().mouseText = Language.GetTextValue(goalState.description);
+            ModContent.GetInstance<BingoBoardSystem>().mouseText = Language.GetTextValue(goalState.goal.description);
         }
 
         public override void MouseOut(UIMouseEvent evt) {

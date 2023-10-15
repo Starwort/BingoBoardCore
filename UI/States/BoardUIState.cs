@@ -11,37 +11,41 @@ using Terraria.UI;
 namespace BingoBoardCore.UI.States {
     internal class BoardUIState : UIState {
         public DraggableUIPanel boardPanel;
-        public bool visible = true;
+        public bool visible = false;
         internal BoardSlot[] innerPanels;
         internal bool pendingScaleChange;
 
         public BoardUIState() : base() {
             boardPanel = new DraggableUIPanel();
             innerPanels = new BoardSlot[25];
+            if (!Main.dedServ) {
+                boardPanel.SetPadding(0);
+                boardPanel.Width.Set((TextureAssets.InventoryBack9.Value.Width * Main.UIScale + 4) * 5 + 4, 0f);
+                boardPanel.Height.Set((TextureAssets.InventoryBack9.Value.Height * Main.UIScale + 4) * 5 + 4, 0f);
+                var parentSpace = Parent.GetDimensions().ToRectangle();
+                boardPanel.Left.Set(0, 0f);
+                boardPanel.Top.Set(parentSpace.Bottom - Height.Pixels, 0f);
+                for (int i = 0; i < 25; i++) {
+                    innerPanels[i] = new BoardSlot(i, new(new(new(ItemID.FallenStar), "Mods.BingoBoardCore.Debug.Error", "BingoBoardCore.Placeholder")));
+                    boardPanel.Append(innerPanels[i]);
+                }
+                Append(boardPanel);
+            }
         }
 
-        public void setupUI(GoalState[] goals) {
-            Debug.Assert(goals.Length == 25);
-            innerPanels = new BoardSlot[25];
+        public void setupUI(GoalState[] goalStates) {
+            if (!Main.dedServ) {
+                Debug.Assert(goalStates.Length == 25);
 
-            boardPanel = new DraggableUIPanel();
-            boardPanel.SetPadding(0);
-            boardPanel.Left.Set(400f, 0f);
-            boardPanel.Top.Set(100f, 0f);
-            boardPanel.Width.Set((TextureAssets.InventoryBack9.Value.Width * Main.UIScale + 4) * 5 + 4, 0f);
-            boardPanel.Height.Set((TextureAssets.InventoryBack9.Value.Height * Main.UIScale + 4) * 5 + 4, 0f);
-
-            for (int i = 0; i < 25; i++) {
-                innerPanels[i] = new BoardSlot(i, goals[i]);
-                boardPanel.Append(innerPanels[i]);
+                for (int i = 0; i < 25; i++) {
+                    innerPanels[i].goalState = goalStates[i];
+                }
             }
-            Append(boardPanel);
-            this.visible = true;
         }
 
         public override void Update(GameTime gameTime) {
             base.Update(gameTime);
-            if (pendingScaleChange) {
+            if (pendingScaleChange && this.visible) {
                 boardPanel.Width.Set((TextureAssets.InventoryBack9.Value.Width * Main.UIScale + 4) * 5 + 4, 0f);
                 boardPanel.Height.Set((TextureAssets.InventoryBack9.Value.Height * Main.UIScale + 4) * 5 + 4, 0f);
                 for (int i = 0; i < 25; i++) {

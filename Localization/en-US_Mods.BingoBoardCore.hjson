@@ -1,1 +1,13 @@
+Debug.Error: You shouldn't be seeing this. Please file a bug.
 
+Team: {
+	White: White
+	Red: Red
+	Green: Green
+	Blue: Blue
+	Yellow: Yellow
+	Pink: Pink
+}
+
+Achieve: "{0} have completed the goal '{1}'!"
+Fail: "{0} have lost the goal '{1}'!"
