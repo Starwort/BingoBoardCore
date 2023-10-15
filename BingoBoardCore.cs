@@ -31,5 +31,27 @@ namespace BingoBoardCore {
                 ));
             }
         }
+
+        public override object Call(params object[] args) {
+            if (args[0] is string meth) {
+                switch (meth) {
+                    case "registerGoal":
+                        Func<BingoMode, int, bool> shouldEnable = Goal.alwaysInclude;
+                        if (args.Length > 4) {
+                            shouldEnable = (Func<BingoMode, int, bool>) args[4];
+                        }
+                        ModContent.GetInstance<BingoBoardSystem>().addGoal(new(
+                            (Item) args[1],
+                            (string) args[2],
+                            (string) args[3],
+                            shouldEnable
+                        ));
+                        return true;
+                }
+                return null!;
+            } else {
+                return null!;
+            }
+        }
     }
 }
