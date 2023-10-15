@@ -261,6 +261,16 @@ namespace BingoBoardCore.Common.Systems {
             activeGoals = new GoalState[25];
             this.mode = mode;
 
+            var teams = new HashSet<int>();
+            foreach (var player in Main.player) {
+                if (!player.active) {
+                    continue;
+                }
+                teams.Add(player.team);
+            }
+
+            var eligibleGoals = allGoals.Values.Select(goal => goal.shouldInclude(mode, teams.Count)).ToArray();
+
             for (int i = 0; i < 25; i++) {
                 activeGoals[i] = new(this.allGoals[$"BingoBoardCore.TestGoal{i}"]);
             }

@@ -22,10 +22,12 @@ namespace BingoBoardCore {
         public override void Load() {
             var system = ModContent.GetInstance<BingoBoardSystem>();
             for (int i = 0; i < 25; i++) {
-                system.addGoal(new Goal(
+                system.addGoal(new(
                     new Item(ItemID.Zenith),
                     $"Test {i}",
-                    $"BingoBoardCore.TestGoal{i}"
+                    $"BingoBoardCore.TestGoal{i}",
+                    // never include the 25 test goals
+                    (_, _) => false
                 ));
             }
         }

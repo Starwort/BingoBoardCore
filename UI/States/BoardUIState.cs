@@ -15,6 +15,13 @@ namespace BingoBoardCore.UI.States {
         internal BoardSlot[] innerPanels;
         internal bool pendingScaleChange;
 
+        internal static readonly Goal dummyGoal = new(
+            new(ItemID.FallenStar),
+            "Mods.BingoBoardCore.Debug.Error",
+            "BingoBoardCore.Placeholder",
+            (_, _) => false
+        );
+
         public BoardUIState() : base() {
             boardPanel = new DraggableUIPanel();
             innerPanels = new BoardSlot[25];
@@ -26,7 +33,7 @@ namespace BingoBoardCore.UI.States {
                 boardPanel.Left.Set(0, 0f);
                 boardPanel.Top.Set(parentSpace.Bottom - Height.Pixels, 0f);
                 for (int i = 0; i < 25; i++) {
-                    innerPanels[i] = new BoardSlot(i, new(new(new(ItemID.FallenStar), "Mods.BingoBoardCore.Debug.Error", "BingoBoardCore.Placeholder")));
+                    innerPanels[i] = new BoardSlot(i, new(dummyGoal));
                     boardPanel.Append(innerPanels[i]);
                 }
                 Append(boardPanel);
