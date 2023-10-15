@@ -11,3 +11,14 @@ Team: {
 
 Achieve: "{0} have completed the goal '{1}'!"
 Fail: "{0} have lost the goal '{1}'!"
+
+MatchStarted: Started a new {} game!
+MatchType: {
+	0: bingo
+	1: triple bingo
+	2: blackout
+	3: lockout
+}
+
+GameEnd: "{0} have won the game!"
+

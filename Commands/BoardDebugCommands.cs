@@ -23,7 +23,7 @@ namespace BingoBoardCore.Commands {
                 "pink" => Team.Pink,
                 _ => throw new Exception("Team colour must be one of white,red,green,blue,yellow,pink"),
             };
-            BingoBoardCore.triggerGoal(goalId, team);
+            ModContent.GetInstance<BingoBoardSystem>().triggerGoal(goalId, team);
         }
     }
     internal class UnTriggerGoalCommand : ModCommand {
@@ -45,7 +45,7 @@ namespace BingoBoardCore.Commands {
                 "pink" => Team.Pink,
                 _ => throw new Exception("Team colour must be one of white,red,green,blue,yellow,pink"),
             };
-            BingoBoardCore.untriggerGoal(goalId, team);
+            ModContent.GetInstance<BingoBoardSystem>().untriggerGoal(goalId, team);
         }
     }
     internal class DebugBoardCommand : ModCommand {
