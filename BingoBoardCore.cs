@@ -13,7 +13,7 @@ namespace BingoBoardCore {
         public static string GithubUserName => "Starwort";
         public static string GithubProjectName => "BingoBoardCore";
 
-        private static bool registerGoal(Item icon, string description, string id, int difficultyTier, string[] synergyTypes, Func<BingoMode, int, bool> shouldEnable = null!) {
+        public static bool registerGoal(Item icon, string description, string id, int difficultyTier, string[] synergyTypes, Func<BingoMode, int, bool> shouldEnable = null!) {
             shouldEnable ??= Goal.alwaysInclude;
             ModContent.GetInstance<BingoBoardSystem>().addGoal(new(
                 icon,
@@ -26,14 +26,14 @@ namespace BingoBoardCore {
             return true;
         }
 
-        private static bool triggerGoal(string id, Player player) {
+        public static bool triggerGoal(string id, Player player) {
             ModContent.GetInstance<BingoBoardSystem>().triggerGoal(
                 id, (Team) player.team
             );
             return true;
         }
 
-        private static bool untriggerGoal(string id, Player player) {
+        public static bool untriggerGoal(string id, Player player) {
             ModContent.GetInstance<BingoBoardSystem>().untriggerGoal(
                 id, (Team) player.team
             );
@@ -41,7 +41,7 @@ namespace BingoBoardCore {
         }
 
         // Useful for 'never do X' goals, to trigger them at the beginning of the game
-        private static bool onGameStart(Func<object> callback) {
+        public static bool onGameStart(Func<object> callback) {
             ModContent.GetInstance<BingoBoardSystem>().gameStartCallbacks.Add(callback);
             return true;
         }
