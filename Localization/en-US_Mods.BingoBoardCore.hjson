@@ -11,8 +11,9 @@ Team: {
 
 Achieve: "{0} have completed the goal '{1}'!"
 Fail: "{0} have lost the goal '{1}'!"
+NotEnoughGoals: Could not generate the board, due to having no candidate goals for difficulty {0}. Check you have enough goal plugins installed and try again!
+MatchStarted: Started a new {0} game!
 
-MatchStarted: Started a new {} game!
 MatchType: {
 	0: bingo
 	1: triple bingo
@@ -21,4 +22,3 @@ MatchType: {
 }
 
 GameEnd: "{0} have won the game!"
-

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Reflection;
 using Terraria;
 using Terraria.Enums;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace BingoBoardCore {
@@ -14,25 +13,14 @@ namespace BingoBoardCore {
         public static string GithubUserName => "Starwort";
         public static string GithubProjectName => "BingoBoardCore";
 
-        public override void Load() {
-            var system = ModContent.GetInstance<BingoBoardSystem>();
-            for (int i = 0; i < 25; i++) {
-                system.addGoal(new(
-                    new Item(ItemID.Zenith),
-                    $"Test {i}",
-                    $"BingoBoardCore.TestGoal{i}",
-                    // never include the 25 test goals
-                    (_, _) => false
-                ));
-            }
-        }
-
-        private static bool registerGoal(Item icon, string description, string id, Func<BingoMode, int, bool> shouldEnable = null!) {
+        private static bool registerGoal(Item icon, string description, string id, int difficultyTier, string[] synergyTypes, Func<BingoMode, int, bool> shouldEnable = null!) {
             shouldEnable ??= Goal.alwaysInclude;
             ModContent.GetInstance<BingoBoardSystem>().addGoal(new(
                 icon,
                 description,
                 id,
+                difficultyTier,
+                synergyTypes,
                 shouldEnable
             ));
             return true;

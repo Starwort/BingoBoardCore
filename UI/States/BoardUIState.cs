@@ -19,6 +19,8 @@ namespace BingoBoardCore.UI.States {
             new(ItemID.FallenStar),
             "Mods.BingoBoardCore.Debug.Error",
             "BingoBoardCore.Placeholder",
+            0,
+            System.Array.Empty<string>(),
             (_, _) => false
         );
 
@@ -29,7 +31,7 @@ namespace BingoBoardCore.UI.States {
                 boardPanel.SetPadding(0);
                 boardPanel.Width.Set((TextureAssets.InventoryBack9.Value.Width * Main.UIScale + 4) * 5 + 4, 0f);
                 boardPanel.Height.Set((TextureAssets.InventoryBack9.Value.Height * Main.UIScale + 4) * 5 + 4, 0f);
-                var parentSpace = Parent.GetDimensions().ToRectangle();
+                var parentSpace = GetDimensions().ToRectangle();
                 boardPanel.Left.Set(0, 0f);
                 boardPanel.Top.Set(parentSpace.Bottom - Height.Pixels, 0f);
                 for (int i = 0; i < 25; i++) {

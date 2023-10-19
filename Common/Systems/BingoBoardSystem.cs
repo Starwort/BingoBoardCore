@@ -255,6 +255,105 @@ namespace BingoBoardCore.Common.Systems {
             sync();
         }
 
+        // from https://github.com/kbuzsaki/bingosync/blob/main/bingosync-app/generators/generator_bases/srl_generator_v5.js
+        static readonly int[][] lineChecklist = new[] {
+            new[] {1, 2, 3, 4, 5, 10, 15, 20, 6, 12, 18, 24},
+            new[] {0, 2, 3, 4, 6, 11, 16, 21},
+            new[] {0, 1, 3, 4, 7, 12, 17, 22},
+            new[] {0, 1, 2, 4, 8, 13, 18, 23},
+            new[] {0, 1, 2, 3, 8, 12, 16, 20, 9, 14, 19, 24},
+            new[] {0, 10, 15, 20, 6, 7, 8, 9},
+            new[] {0, 12, 18, 24, 5, 7, 8, 9, 1, 11, 16, 21},
+            new[] {5, 6, 8, 9, 2, 12, 17, 22},
+            new[] {4, 12, 16, 20, 9, 7, 6, 5, 3, 13, 18, 23},
+            new[] {4, 14, 19, 24, 8, 7, 6, 5},
+            new[] {0, 5, 15, 20, 11, 12, 13, 14},
+            new[] {1, 6, 16, 21, 10, 12, 13, 14},
+            new[] {0, 6, 12, 18, 24, 20, 16, 8, 4, 2, 7, 17, 22, 10, 11, 13, 14},
+            new[] {3, 8, 18, 23, 10, 11, 12, 14},
+            new[] {4, 9, 19, 24, 10, 11, 12, 13},
+            new[] {0, 5, 10, 20, 16, 17, 18, 19},
+            new[] {15, 17, 18, 19, 1, 6, 11, 21, 20, 12, 8, 4},
+            new[] {15, 16, 18, 19, 2, 7, 12, 22},
+            new[] {15, 16, 17, 19, 23, 13, 8, 3, 24, 12, 6, 0},
+            new[] {4, 9, 14, 24, 15, 16, 17, 18},
+            new[] {0, 5, 10, 15, 16, 12, 8, 4, 21, 22, 23, 24},
+            new[] {20, 22, 23, 24, 1, 6, 11, 16},
+            new[] {2, 7, 12, 17, 20, 21, 23, 24},
+            new[] {20, 21, 22, 24, 3, 8, 13, 18},
+            new[] {0, 6, 12, 18, 20, 21, 22, 23, 19, 14, 9, 4},
+        };
+
+        static int mirror(int i) => 4 - i;
+
+        static int difficulty(int i, int seed) {
+            int num3 = seed % 1000;
+            int rem8 = num3 % 8;
+            int rem4 = rem8 / 2;
+            int rem2 = rem8 % 2;
+            int rem5 = num3 % 5;
+            int rem3 = num3 % 3;
+            int remT = num3 / 120;
+            var table5 = new List<int> { 0 };
+            table5.Insert(rem2, 1);
+            table5.Insert(rem3, 2);
+            table5.Insert(rem4, 3);
+            table5.Insert(rem5, 4);
+
+            num3 = seed / 1000;
+            num3 %= 1000;
+            rem8 = num3 % 8;
+            rem4 = rem8 / 2;
+            rem2 = rem8 % 2;
+            rem5 = num3 % 5;
+            rem3 = num3 % 3;
+            remT = remT * 8 + num3 / 120;
+            var table1 = new List<int> { 0 };
+            table1.Insert(rem2, 1);
+            table1.Insert(rem3, 2);
+            table1.Insert(rem4, 3);
+            table1.Insert(rem5, 4);
+
+            remT %= 5;
+            int x = (i + remT) % 5;
+            int y = i / 5;
+            int e5 = table5[(x + 3 * y) % 5];
+            int e1 = table1[(3 * x + y) % 5];
+            int value = 5 * e5 + e1;
+
+            //if (MODE == "short") {
+            //    value = value / 2;
+            //} else if (MODE == "long") {
+            //    value = (value + 25) / 2;
+            //}
+
+            return value;
+        }
+
+        static int checkLine(int i, IList<string> typesA, IList<string>[] boardTypes) {
+            var synergy = 0;
+            for (int j = 0; j < lineChecklist[i].Length; j++) {
+                var typesB = boardTypes[lineChecklist[i][j]];
+                if (typesB is null) {
+                    continue;
+                }
+                for (int k = 0; k < typesA.Count; k++) {
+                    for (int l = 0; l < typesB.Count; l++) {
+                        if (typesA[k] == typesB[l]) {
+                            synergy++;
+                            // bonus synergy for the primary types of each goal
+                            if (k == 0) {
+                                synergy++;
+                            }
+                            if (l == 0) {
+                                synergy++;
+                            }
+                        }
+                    }
+                }
+            }
+            return synergy;
+        }
 
         public void generateBingoBoard(BingoMode mode) {
             activeGoals = new GoalState[25];
@@ -268,10 +367,60 @@ namespace BingoBoardCore.Common.Systems {
                 teams.Add(player.team);
             }
 
-            var eligibleGoals = allGoals.Values.Select(goal => goal.shouldInclude(mode, teams.Count)).ToArray();
+            var eligibleGoalGroups = allGoals.Values
+                .Where(goal => goal.shouldInclude(mode, teams.Count))
+                .OrderBy(goal => goal.difficultyTier)
+                .GroupBy(goal => goal.difficultyTier)
+                .Select(group => group.ToArray())
+                .ToArray();
+
+            var eligibleGoals = new Goal[25][];
+            for (int i = 0; i < 25; i++) {
+                eligibleGoals[i] = eligibleGoalGroups.SingleOrDefault(group => group[0].difficultyTier == i)?.ToArray() ?? Array.Empty<Goal>();
+            }
+
+            var seed = (new Random()).Next();
+            Main.NewText($"generating board with seed {seed}");
+
+            var rand = new Random(seed);
+
+            var boardDifficulties = new int[25];
+            for (int i = 0; i < 25; i++) {
+                boardDifficulties[i] = difficulty(i, seed);
+            }
+
+            var boardTypes = new IList<string>[25];
 
             for (int i = 0; i < 25; i++) {
-                activeGoals[i] = new(this.allGoals[$"BingoBoardCore.TestGoal{i}"]);
+                var difficulty = boardDifficulties[i];
+                var candidateGoals = eligibleGoals[difficulty];
+                var numCandidates = candidateGoals.Length;
+                if (numCandidates == 0) {
+                    announce(Color.Red, "Mods.BingoBoardCore.NotEnoughGoals", difficulty.ToString());
+                    return;
+                }
+                var rng = rand.Next(numCandidates);
+
+                var j = 0;
+                var synergy = 0;
+                var curGoal = candidateGoals[rng];
+                var minSyn = new {
+                    synergy = int.MaxValue,
+                    goal = curGoal,
+                };
+                do {
+                    curGoal = candidateGoals[(j + rng) % numCandidates];
+                    synergy = checkLine(i, curGoal.synergyTypes, boardTypes);
+                    if (synergy < minSyn.synergy) {
+                        minSyn = new {
+                            synergy,
+                            goal = curGoal,
+                        };
+                    }
+                    j++;
+                } while (synergy != 0 && j < numCandidates);
+                boardTypes[i] = minSyn.goal.synergyTypes;
+                activeGoals[i] = new(minSyn.goal);
             }
 
             announce(Color.White, "Mods.BingoBoardCore.MatchStarted", $"Mods.BingoBoardCore.MatchType.{(int) mode}");
