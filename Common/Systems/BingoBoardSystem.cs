@@ -4,17 +4,14 @@ using Terraria;
 using Terraria.UI;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using System.Collections;
 using Terraria.ID;
 using System.IO;
 using System.Diagnostics;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Terraria.Localization;
 using System.Linq;
 using Terraria.Chat;
 using System;
 using Terraria.Enums;
-using Terraria.DataStructures;
 
 namespace BingoBoardCore.Common.Systems {
     internal class GoalState {
@@ -101,6 +98,8 @@ namespace BingoBoardCore.Common.Systems {
         internal GoalState[]? activeGoals;
         internal bool isGameOver = false;
         internal BingoMode mode = BingoMode.Bingo;
+
+        internal List<Func<object>> gameStartCallbacks = new();
 
         public override void Load() {
             if (!Main.dedServ) {
@@ -277,6 +276,9 @@ namespace BingoBoardCore.Common.Systems {
 
             announce(Color.White, "Mods.BingoBoardCore.MatchStarted", $"Mods.BingoBoardCore.MatchType.{(int) mode}");
             sync();
+            foreach (var gameStartCallback in gameStartCallbacks) {
+                gameStartCallback();
+            }
         }
 
         public void destroyBingoBoard() {

@@ -3,7 +3,7 @@ using System;
 using Terraria;
 
 namespace BingoBoardCore.Common {
-    public sealed class Goal {
+    public class Goal {
         public readonly Item icon;
         public readonly string description;
         public readonly string id;
