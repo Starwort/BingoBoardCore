@@ -11,8 +11,16 @@ Team: {
 
 Achieve: "{0} have completed the goal '{1}'!"
 Fail: "{0} have lost the goal '{1}'!"
-NotEnoughGoals: Could not generate the board, due to having no candidate goals for difficulty {0}. Check you have enough goal plugins installed and try again!
+
+Error: {
+	NotEnoughGoals: Could not generate the board, due to having no candidate goals for difficulty {0}. Check you have enough goal plugins installed and try again!
+	GameInProgress: Could not start a new game, as one is already in progress
+	NoBoard: Could not end the game, as no game was in progress
+}
+
 MatchStarted: Started a new {0} game!
+ClosedBoard: Dismissed finished game board
+CancelledActiveGame: Cancelled in-progress game
 
 MatchType: {
 	0: bingo
@@ -22,3 +30,14 @@ MatchType: {
 }
 
 GameEnd: "{0} have won the game!"
+
+Items: {
+	Die: {
+		DisplayName: "{$Debug.Error}"
+		Tooltip: ""
+	}
+	Disallow: {
+		DisplayName: "{$Debug.Error}"
+		Tooltip: ""
+	}
+}

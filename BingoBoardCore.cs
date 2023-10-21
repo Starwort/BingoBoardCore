@@ -1,11 +1,15 @@
 global using static BingoBoardCore.Util.DrawingHelper;
 using BingoBoardCore.Common;
 using BingoBoardCore.Common.Systems;
+using BingoBoardCore.Icons;
+using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
 using System.Reflection;
 using Terraria;
 using Terraria.Enums;
+using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace BingoBoardCore {
@@ -13,7 +17,7 @@ namespace BingoBoardCore {
         public static string GithubUserName => "Starwort";
         public static string GithubProjectName => "BingoBoardCore";
 
-        public static bool registerGoal(Item icon, string description, string id, int difficultyTier, string[] synergyTypes, Func<BingoMode, int, bool> shouldEnable = null!) {
+        public static bool registerGoal(Item icon, string description, string id, int difficultyTier, string[] synergyTypes, Func<BingoMode, int, bool> shouldEnable = null!, string iconText = "", Item? modifierIcon = null) {
             shouldEnable ??= Goal.alwaysInclude;
             ModContent.GetInstance<BingoBoardSystem>().addGoal(new(
                 icon,
@@ -21,7 +25,9 @@ namespace BingoBoardCore {
                 id,
                 difficultyTier,
                 synergyTypes,
-                shouldEnable
+                shouldEnable,
+                iconText,
+                modifierIcon
             ));
             return true;
         }
@@ -41,9 +47,38 @@ namespace BingoBoardCore {
         }
 
         // Useful for 'never do X' goals, to trigger them at the beginning of the game
-        public static bool onGameStart(Func<object> callback) {
+        public static bool onGameStart(Action callback) {
             ModContent.GetInstance<BingoBoardSystem>().gameStartCallbacks.Add(callback);
             return true;
+        }
+
+        public static void reportProgress(string goalId, string progressText, params string[] substitutions) {
+            if (Main.netMode != NetmodeID.Server) {
+                var player = Main.player[Main.myPlayer];
+                if (ModContent.GetInstance<BingoBoardSystem>().activeGoals?.Any(goalState => goalState.goal.id == goalId) ?? false) {
+                    PopupText.NewText(new AdvancedPopupRequest() {
+                        Text = Language.GetTextValue(progressText, substitutions.Select(subsitution => Language.GetTextValue(subsitution))),
+                        DurationInFrames = 60,
+                        Velocity = -7 * Vector2.UnitY,
+                        Color = Color.Green,
+                    }, player.Center);
+                }
+            }
+        }
+
+        // E.G., when a goal can no longer be achieved in the current attempt (such as dealing disallowed damage to a boss)
+        public static void reportBadProgress(string goalId, string progressText, params string[] substitutions) {
+            if (Main.netMode != NetmodeID.Server) {
+                var player = Main.player[Main.myPlayer];
+                if (ModContent.GetInstance<BingoBoardSystem>().activeGoals?.Any(goalState => goalState.goal.id == goalId) ?? false) {
+                    PopupText.NewText(new AdvancedPopupRequest() {
+                        Text = Language.GetTextValue(progressText, substitutions.Select(subsitution => Language.GetTextValue(subsitution))),
+                        DurationInFrames = 60,
+                        Velocity = -7 * Vector2.UnitY,
+                        Color = Color.Red,
+                    }, player.Center);
+                }
+            }
         }
 
         private object dispatch(object[] args, string[] functions) {
@@ -86,7 +121,25 @@ namespace BingoBoardCore {
                 nameof(triggerGoal),
                 nameof(untriggerGoal),
                 nameof(onGameStart),
+                nameof(reportProgress),
+                nameof(reportBadProgress),
             });
+        }
+
+        private static Item? _dieIcon;
+        public static Item dieIcon {
+            get {
+                _dieIcon ??= ModContent.GetInstance<Die>().Item;
+                return _dieIcon;
+            }
+        }
+
+        private static Item? _disallowIcon;
+        public static Item disallowIcon {
+            get {
+                _disallowIcon ??= ModContent.GetInstance<Disallow>().Item;
+                return _disallowIcon;
+            }
         }
     }
 }

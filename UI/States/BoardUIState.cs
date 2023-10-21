@@ -13,7 +13,6 @@ namespace BingoBoardCore.UI.States {
         public DraggableUIPanel boardPanel;
         public bool visible = false;
         internal BoardSlot[] innerPanels;
-        internal bool pendingScaleChange;
 
         internal static readonly Goal dummyGoal = new(
             new(ItemID.FallenStar),
@@ -29,11 +28,12 @@ namespace BingoBoardCore.UI.States {
             innerPanels = new BoardSlot[25];
             if (!Main.dedServ) {
                 boardPanel.SetPadding(0);
-                boardPanel.Width.Set((TextureAssets.InventoryBack9.Value.Width * Main.UIScale + 4) * 5 + 4, 0f);
-                boardPanel.Height.Set((TextureAssets.InventoryBack9.Value.Height * Main.UIScale + 4) * 5 + 4, 0f);
+                boardPanel.Width.Set((TextureAssets.InventoryBack9.Value.Width + 4) * 5 + 4, 0f);
+                boardPanel.Height.Set((TextureAssets.InventoryBack9.Value.Height + 4) * 5 + 4, 0f);
                 var parentSpace = GetDimensions().ToRectangle();
-                boardPanel.Left.Set(0, 0f);
-                boardPanel.Top.Set(parentSpace.Bottom - Height.Pixels, 0f);
+                boardPanel.Left.Pixels = 0;
+                boardPanel.Top.Pixels = parentSpace.Bottom - boardPanel.Height.Pixels;
+                boardPanel.Recalculate();
                 for (int i = 0; i < 25; i++) {
                     innerPanels[i] = new BoardSlot(i, new(dummyGoal));
                     boardPanel.Append(innerPanels[i]);
@@ -53,14 +53,8 @@ namespace BingoBoardCore.UI.States {
         }
 
         public override void Update(GameTime gameTime) {
-            base.Update(gameTime);
-            if (pendingScaleChange && this.visible) {
-                boardPanel.Width.Set((TextureAssets.InventoryBack9.Value.Width * Main.UIScale + 4) * 5 + 4, 0f);
-                boardPanel.Height.Set((TextureAssets.InventoryBack9.Value.Height * Main.UIScale + 4) * 5 + 4, 0f);
-                for (int i = 0; i < 25; i++) {
-                    innerPanels[i].pendingScaleChange = true;
-                }
-                pendingScaleChange = false;
+            if (this.visible) {
+                base.Update(gameTime);
             }
         }
 

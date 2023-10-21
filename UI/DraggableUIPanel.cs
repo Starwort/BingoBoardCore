@@ -1,8 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BingoBoardCore.Common.Systems;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
+using Terraria.ModLoader;
 using Terraria.UI;
 
 namespace BingoBoardCore.UI {
@@ -12,13 +14,17 @@ namespace BingoBoardCore.UI {
         public bool dragging;
 
         public override void LeftMouseDown(UIMouseEvent evt) {
-            base.LeftMouseDown(evt);
-            DragStart(evt);
+            if (ModContent.GetInstance<BingoBoardSystem>().boardUI.visible) {
+                base.LeftMouseDown(evt);
+                DragStart(evt);
+            }
         }
 
         public override void LeftMouseUp(UIMouseEvent evt) {
-            base.LeftMouseUp(evt);
-            DragEnd(evt);
+            if (ModContent.GetInstance<BingoBoardSystem>().boardUI.visible) {
+                base.LeftMouseUp(evt);
+                DragEnd(evt);
+            }
         }
 
         private void DragStart(UIMouseEvent evt) {
@@ -37,7 +43,6 @@ namespace BingoBoardCore.UI {
         }
 
         public override void Update(GameTime gameTime) {
-            base.Update(gameTime);
             if (this.ContainsPoint(Main.MouseScreen)) {
                 Main.LocalPlayer.mouseInterface = true;
             }
@@ -54,6 +59,7 @@ namespace BingoBoardCore.UI {
                 Top.Pixels = Utils.Clamp(Top.Pixels, 0, parentSpace.Bottom - Height.Pixels);
                 Recalculate();
             }
+            base.Update(gameTime);
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch) {

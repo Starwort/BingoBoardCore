@@ -1,8 +1,8 @@
 Adds Bingo and Lockout boards to Terraria.
 
 Current features:
-- None yet :(
+- Goals are added by other mods
+- Can create Bingo, Triple Bingo, Blackout, and Lockout boards on a multiplayer server
 
 Planned features:
-- Works either on a multiplayer server, or on singleplayer worlds with the mod connected to a standalone server.
-- Goals can be added by other mods.
+- Support for single-player worlds via a standalone server (would likely need a major refactor)

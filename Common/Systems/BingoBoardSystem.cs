@@ -99,7 +99,7 @@ namespace BingoBoardCore.Common.Systems {
         internal bool isGameOver = false;
         internal BingoMode mode = BingoMode.Bingo;
 
-        internal List<Func<object>> gameStartCallbacks = new();
+        internal List<Action> gameStartCallbacks = new();
 
         public override void Load() {
             if (!Main.dedServ) {
@@ -127,20 +127,7 @@ namespace BingoBoardCore.Common.Systems {
             }
         }
 
-        internal bool pendingScaleChange = false;
-        internal float lastKnownUIScale = -1;
-
         public override void UpdateUI(GameTime gameTime) {
-            if (lastKnownUIScale != Main.UIScale) {
-                lastKnownUIScale = Main.UIScale;
-                pendingScaleChange = true;
-            }
-
-            if (pendingScaleChange && boardUI is not null) {
-                boardUI.pendingScaleChange = true;
-                pendingScaleChange = false;
-            }
-
             _boardUI?.Update(gameTime);
             if (mouseText.Length > 0) {
                 Main.instance.MouseText(mouseText);
@@ -284,8 +271,6 @@ namespace BingoBoardCore.Common.Systems {
             new[] {0, 6, 12, 18, 20, 21, 22, 23, 19, 14, 9, 4},
         };
 
-        static int mirror(int i) => 4 - i;
-
         static int difficulty(int i, int seed) {
             int num3 = seed % 1000;
             int rem8 = num3 % 8;
@@ -396,7 +381,8 @@ namespace BingoBoardCore.Common.Systems {
                 var candidateGoals = eligibleGoals[difficulty];
                 var numCandidates = candidateGoals.Length;
                 if (numCandidates == 0) {
-                    announce(Color.Red, "Mods.BingoBoardCore.NotEnoughGoals", difficulty.ToString());
+                    announce(Color.Red, "Mods.BingoBoardCore.Error.NotEnoughGoals", difficulty.ToString());
+                    activeGoals = null;
                     return;
                 }
                 var rng = rand.Next(numCandidates);
