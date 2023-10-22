@@ -29,7 +29,7 @@ namespace BingoBoardCore.UI {
             Height.Set(TextureAssets.InventoryBack9.Value.Height, 0f);
             iconText = new(goalState.goal.iconText);
             iconText.Left.Set(4, 0);
-            iconText.Top.Set(TextureAssets.InventoryBack9.Value.Height - 4, 0);
+            iconText.Top.Set(TextureAssets.InventoryBack9.Value.Height - 20, 0);
             iconText.DynamicallyScaleDownToWidth = true;
             this.Append(iconText);
         }

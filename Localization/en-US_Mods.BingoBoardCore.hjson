@@ -36,6 +36,7 @@ Items: {
 		DisplayName: "{$Debug.Error}"
 		Tooltip: ""
 	}
+
 	Disallow: {
 		DisplayName: "{$Debug.Error}"
 		Tooltip: ""

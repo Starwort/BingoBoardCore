@@ -343,6 +343,7 @@ namespace BingoBoardCore.Common.Systems {
         public void generateBingoBoard(BingoMode mode) {
             activeGoals = new GoalState[25];
             this.mode = mode;
+            this.isGameOver = false;
 
             var teams = new HashSet<int>();
             foreach (var player in Main.player) {
@@ -418,6 +419,7 @@ namespace BingoBoardCore.Common.Systems {
 
         public void destroyBingoBoard() {
             activeGoals = null;
+            this.isGameOver = false;
             sync();
         }
 

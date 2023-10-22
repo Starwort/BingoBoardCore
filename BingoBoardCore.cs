@@ -57,7 +57,7 @@ namespace BingoBoardCore {
                 var player = Main.player[Main.myPlayer];
                 if (ModContent.GetInstance<BingoBoardSystem>().activeGoals?.Any(goalState => goalState.goal.id == goalId) ?? false) {
                     PopupText.NewText(new AdvancedPopupRequest() {
-                        Text = Language.GetTextValue(progressText, substitutions.Select(subsitution => Language.GetTextValue(subsitution))),
+                        Text = Language.GetTextValue(progressText, substitutions.Select(subsitution => Language.GetTextValue(subsitution)).ToArray()),
                         DurationInFrames = 60,
                         Velocity = -7 * Vector2.UnitY,
                         Color = Color.Green,
@@ -72,7 +72,7 @@ namespace BingoBoardCore {
                 var player = Main.player[Main.myPlayer];
                 if (ModContent.GetInstance<BingoBoardSystem>().activeGoals?.Any(goalState => goalState.goal.id == goalId) ?? false) {
                     PopupText.NewText(new AdvancedPopupRequest() {
-                        Text = Language.GetTextValue(progressText, substitutions.Select(subsitution => Language.GetTextValue(subsitution))),
+                        Text = Language.GetTextValue(progressText, substitutions.Select(subsitution => Language.GetTextValue(subsitution)).ToArray()),
                         DurationInFrames = 60,
                         Velocity = -7 * Vector2.UnitY,
                         Color = Color.Red,
