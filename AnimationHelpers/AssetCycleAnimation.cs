@@ -9,7 +9,7 @@ namespace BingoBoardCore.AnimationHelpers {
         public override string Texture => $"Terraria/Images/CoolDown";
 
         public AssetCycleAnimation() {
-            ModContent.GetInstance<IconAnimationSystem>().assetAnimations.Add(this);
+            IconAnimationSystem.assetAnimations.Add(this);
         }
 
         // Get the textureasset corresponding with what to show this seq

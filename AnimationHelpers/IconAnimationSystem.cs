@@ -4,12 +4,12 @@ using Terraria;
 using Terraria.ModLoader;
 
 namespace BingoBoardCore.AnimationHelpers {
-    internal class IconAnimationSystem : ModSystem {
-        internal uint animationPeriod => BingoBoardCore.animationPeriod;
+    public class IconAnimationSystem : ModSystem {
+        internal static uint animationPeriod => BingoBoardCore.animationPeriod;
 
-        internal List<(Item, int[])> seqAnimations = new();
-        internal List<(Item, int[])> randAnimations = new();
-        internal List<AssetCycleAnimation> assetAnimations = new();
+        internal static List<(Item, int[])> seqAnimations = new();
+        internal static List<(Item, int[])> randAnimations = new();
+        internal static List<AssetCycleAnimation> assetAnimations = new();
 
         private Random rng = new();
 
@@ -26,6 +26,18 @@ namespace BingoBoardCore.AnimationHelpers {
                     animation.animate(frame);
                 }
             }
+        }
+
+        public static Item registerCycleAnimation(params int[] itemIds) {
+            Item rv = new(itemIds[0]);
+            seqAnimations.Add((rv, itemIds));
+            return rv;
+        }
+
+        public static Item registerRandAnimation(params int[] itemIds) {
+            Item rv = new(itemIds[0]);
+            randAnimations.Add((rv, itemIds));
+            return rv;
         }
     }
 }

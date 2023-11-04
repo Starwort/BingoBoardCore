@@ -98,16 +98,12 @@ namespace BingoBoardCore {
             }
         }
 
-        public static Item registerCycleAnimation(int[] itemIds) {
-            Item rv = new(itemIds[0]);
-            ModContent.GetInstance<IconAnimationSystem>().seqAnimations.Add((rv, itemIds));
-            return rv;
+        public static Item registerCycleAnimation(params int[] itemIds) {
+            return IconAnimationSystem.registerCycleAnimation(itemIds);
         }
 
-        public static Item registerRandAnimation(int[] itemIds) {
-            Item rv = new(itemIds[0]);
-            ModContent.GetInstance<IconAnimationSystem>().randAnimations.Add((rv, itemIds));
-            return rv;
+        public static Item registerRandAnimation(params int[] itemIds) {
+            return IconAnimationSystem.registerRandAnimation(itemIds);
         }
 
         private object dispatch(object[] args, string[] functions) {
