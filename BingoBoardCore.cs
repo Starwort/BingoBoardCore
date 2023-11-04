@@ -1,5 +1,7 @@
 global using static BingoBoardCore.Util.DrawingHelper;
+using BingoBoardCore.AnimationHelpers;
 using BingoBoardCore.Common;
+using BingoBoardCore.Common.Configs;
 using BingoBoardCore.Common.Systems;
 using BingoBoardCore.Icons;
 using Microsoft.Xna.Framework;
@@ -16,6 +18,9 @@ namespace BingoBoardCore {
     public class BingoBoardCore : Mod {
         public static string GithubUserName => "Starwort";
         public static string GithubProjectName => "BingoBoardCore";
+
+        // Re-export in case any content plugins want it more easily
+        public static uint animationPeriod => ModContent.GetInstance<BingoBoardUIConfig>().animationPeriod;
 
         public static bool registerGoal(Item icon, string description, string id, int difficultyTier, string[] synergyTypes, Func<BingoMode, int, bool> shouldEnable = null!, string iconText = "", Item? modifierIcon = null) {
             shouldEnable ??= Goal.alwaysInclude;
@@ -52,10 +57,22 @@ namespace BingoBoardCore {
             return true;
         }
 
+        internal static bool shouldReportProgress(string goalId) {
+            var system = ModContent.GetInstance<BingoBoardSystem>();
+            var goalState = system.activeGoals?.Where(goalState => goalState.goal.id == goalId).First();
+            if (goalState is null) {
+                return false;
+            }
+            if (system.mode != BingoMode.Lockout) {
+                return true;
+            }
+            return goalState.packedClear == 0;
+        }
+
         public static void reportProgress(string goalId, string progressText, params string[] substitutions) {
             if (Main.netMode != NetmodeID.Server) {
                 var player = Main.player[Main.myPlayer];
-                if (ModContent.GetInstance<BingoBoardSystem>().activeGoals?.Any(goalState => goalState.goal.id == goalId) ?? false) {
+                if (shouldReportProgress(goalId)) {
                     PopupText.NewText(new AdvancedPopupRequest() {
                         Text = Language.GetTextValue(progressText, substitutions.Select(subsitution => Language.GetTextValue(subsitution)).ToArray()),
                         DurationInFrames = 60,
@@ -70,7 +87,7 @@ namespace BingoBoardCore {
         public static void reportBadProgress(string goalId, string progressText, params string[] substitutions) {
             if (Main.netMode != NetmodeID.Server) {
                 var player = Main.player[Main.myPlayer];
-                if (ModContent.GetInstance<BingoBoardSystem>().activeGoals?.Any(goalState => goalState.goal.id == goalId) ?? false) {
+                if (shouldReportProgress(goalId)) {
                     PopupText.NewText(new AdvancedPopupRequest() {
                         Text = Language.GetTextValue(progressText, substitutions.Select(subsitution => Language.GetTextValue(subsitution)).ToArray()),
                         DurationInFrames = 60,
@@ -79,6 +96,18 @@ namespace BingoBoardCore {
                     }, player.Center);
                 }
             }
+        }
+
+        public static Item registerCycleAnimation(int[] itemIds) {
+            Item rv = new(itemIds[0]);
+            ModContent.GetInstance<IconAnimationSystem>().seqAnimations.Add((rv, itemIds));
+            return rv;
+        }
+
+        public static Item registerRandAnimation(int[] itemIds) {
+            Item rv = new(itemIds[0]);
+            ModContent.GetInstance<IconAnimationSystem>().randAnimations.Add((rv, itemIds));
+            return rv;
         }
 
         private object dispatch(object[] args, string[] functions) {
@@ -123,6 +152,8 @@ namespace BingoBoardCore {
                 nameof(onGameStart),
                 nameof(reportProgress),
                 nameof(reportBadProgress),
+                nameof(registerCycleAnimation),
+                nameof(registerRandAnimation),
             });
         }
 

@@ -1,0 +1,6 @@
+DisplayName: Bingo Board Core UI Config
+
+animationPeriod: {
+	Label: Animation Cycle Duration (ticks)
+	Tooltip: How long cycling animations stay on one cycle for, in ticks (1/60s)
+}
