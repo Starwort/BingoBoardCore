@@ -20,7 +20,7 @@ namespace BingoBoardCore {
         public static string GithubProjectName => "BingoBoardCore";
 
         // Re-export in case any content plugins want it more easily
-        public static uint animationPeriod => ModContent.GetInstance<BingoBoardUIConfig>().animationPeriod;
+        public static uint animationPeriod => ModContent.GetInstance<BingoBoardUIConfig>()?.animationPeriod ?? 30;
 
         public static bool registerGoal(Item icon, string description, string id, int difficultyTier, string[] synergyTypes, Func<BingoMode, int, bool> shouldEnable = null!, string iconText = "", Item? modifierIcon = null) {
             shouldEnable ??= Goal.alwaysInclude;
