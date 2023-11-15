@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -34,10 +35,18 @@ namespace BingoBoardCore.AnimationHelpers {
             return rv;
         }
 
+        public static Item registerCycleAnimation(IEnumerable<int> itemIds) {
+            return registerCycleAnimation(itemIds.ToArray());
+        }
+
         public static Item registerRandAnimation(params int[] itemIds) {
             Item rv = new(itemIds[0]);
             randAnimations.Add((rv, itemIds));
             return rv;
+        }
+
+        public static Item registerRandAnimation(IEnumerable<int> itemIds) {
+            return registerRandAnimation(itemIds.ToArray());
         }
     }
 }
