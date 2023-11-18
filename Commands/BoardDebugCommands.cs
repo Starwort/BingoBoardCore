@@ -94,4 +94,36 @@ namespace BingoBoardCore.Commands {
             system.sync();
         }
     }
+    internal class GoalDebugCommand : ModCommand {
+        public override string Command => "setgoal";
+
+        public override CommandType Type => CommandType.World;
+
+        public override void Action(CommandCaller caller, string input, string[] args) {
+            if (args.Length < 2) {
+                caller.Reply("need goal position ID and goal ID");
+                return;
+            }
+            if (!int.TryParse(args[0], out int id)) {
+                return;
+            }
+            if (id < 0 || id > 24) {
+                caller.Reply("goal position ID must be in range [0,25)");
+                return;
+            }
+            var system = ModContent.GetInstance<BingoBoardSystem>();
+            if (!system.allGoals.TryGetValue(args[1], out var goal)) {
+                caller.Reply($"unknown goal {args[1]}");
+                return;
+            }
+            if (system.activeGoals is null) {
+                system.activeGoals = new GoalState[25];
+                for (var i = 0; i < 25; i++) {
+                    system.activeGoals[i] = new(goal);
+                }
+            }
+            system.activeGoals[id] = new(goal);
+            system.sync();
+        }
+    }
 }
