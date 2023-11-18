@@ -10,7 +10,7 @@ namespace BingoBoardCore.AnimationHelpers {
 
         internal static List<(Item, int[])> seqAnimations = new();
         internal static List<(Item, int[])> randAnimations = new();
-        internal static List<IAnimatedObject> animatedObjects = new();
+        internal static Dictionary<int, IAnimatedObject> animatedObjects = new();
 
         private Random rng = new();
 
@@ -23,7 +23,7 @@ namespace BingoBoardCore.AnimationHelpers {
                 foreach ((Item icon, int[] frames) in randAnimations) {
                     icon.type = frames[rng.Next(frames.Length)];
                 }
-                foreach (var animation in animatedObjects) {
+                foreach (var animation in animatedObjects.Values) {
                     animation.animate(frame);
                 }
             }
