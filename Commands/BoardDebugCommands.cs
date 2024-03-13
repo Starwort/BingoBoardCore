@@ -1,5 +1,6 @@
 ﻿using BingoBoardCore.Common.Systems;
 using System;
+using System.Linq;
 using Terraria.Enums;
 using Terraria.ModLoader;
 
@@ -111,7 +112,8 @@ namespace BingoBoardCore.Commands {
                 caller.Reply("goal position ID must be in range [0,25)");
                 return;
             }
-            if (!BingoBoardSystem.allGoals.TryGetValue(args[1], out var goal)) {
+            var goal = BingoBoardSystem.allGoals.Where(goal => goal.id == args[1]).FirstOrDefault();
+            if (goal is null) {
                 caller.Reply($"unknown goal {args[1]}");
                 return;
             }

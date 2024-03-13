@@ -17,6 +17,11 @@ namespace BingoBoardCore.Common {
 
         public DynamicGoal() {
             this.origin = null!;
+            this.originId = "";
+            this.icon = null!;
+            this.synergyTypes = base.synergyTypes;
+            this.modifierIcon = base.modifierIcon;
+            this.modifierText = base.modifierText;
         }
 
         public DynamicGoal(
