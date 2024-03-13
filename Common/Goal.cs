@@ -46,11 +46,15 @@ namespace BingoBoardCore.Common {
         public virtual string? progressText() => null;
         public virtual void onGameStart() {}
 
-        public void reportProgress(string progressText, params string[] substitutions) {
-            BingoBoardCore.reportProgress(this.id, progressText, substitutions);
+        // Report progress towards this goal, if this goal is present.
+        // Localisation keys are expected to be of the format Mods.YourMod.Progress.GoalName
+        public void reportProgress(params string[] substitutions) {
+            BingoBoardCore.reportProgress(this.id, "Mods." + this.Mod.Name + ".Progress." + this.localId, substitutions);
         }
-        public void reportBadProgress(string progressText, params string[] substitutions) {
-            BingoBoardCore.reportBadProgress(this.id, progressText, substitutions);
+        // Report progress towards this goal, if this goal is present.
+        // Localisation keys are expected to be of the format Mods.YourMod.BadProgress.GoalName
+        public void reportBadProgress(params string[] substitutions) {
+            BingoBoardCore.reportBadProgress(this.id, "Mods." + this.Mod.Name + ".BadProgress." + this.localId, substitutions);
         }
 
         protected sealed override void Register() {
