@@ -13,9 +13,9 @@ namespace BingoBoardCore.Common {
         // - Use BingoBoardCore[.IconAnimationSystem].register{Rand,Cycle}Animation()
         //   to register an animation
         public abstract Item icon { get; }
-        public abstract string description { get; }
+        public string description => "Mods." + id;
         protected readonly string localId;
-        public string id => Mod.Name + '.' + localId;
+        public string id => Mod is BingoBoardCore ? localId : Mod.Name + '.' + localId;
         // Difficulty tier, from 0 to 24
         public abstract int difficultyTier { get; }
         public abstract IList<string> synergyTypes { get; }

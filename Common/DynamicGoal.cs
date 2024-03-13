@@ -11,12 +11,11 @@ namespace BingoBoardCore.Common {
         }
 
         public DynamicGoal(
-            Item icon, string description, string id, int difficultyTier,
+            Item icon, Mod mod, string id, int difficultyTier,
             string[] synergyTypes, Func<BingoMode, int, bool, bool>? enable,
             string iconText = "", Item? modifierIcon = null
-        ) : base(id) {
+        ) : base(mod.Name + '.' + id) {
             this.icon = icon;
-            this.description = description;
             if (difficultyTier < 0) {
                 throw new ArgumentOutOfRangeException(nameof(difficultyTier), "Difficulty tier must not be negative");
             } else if (difficultyTier > 24) {
@@ -35,9 +34,6 @@ namespace BingoBoardCore.Common {
         ) => (this._enable ?? base.enable)(mode, numPlayers, isSharedWorld);
 
         public override Item icon { get; }
-        public override string description {
-            get;
-        }
         public override int difficultyTier {
             get;
         }
