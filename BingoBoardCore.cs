@@ -23,7 +23,7 @@ namespace BingoBoardCore {
         public static uint animationPeriod => ModContent.GetInstance<BingoBoardUIConfig>()?.animationPeriod ?? 30;
 
         public static bool registerGoal(Item icon, Mod mod, string id, int difficultyTier, string[] synergyTypes, Func<BingoMode, int, bool, bool>? enable = null, string iconText = "", Item? modifierIcon = null) {
-            BingoBoardSystem.addGoal(new DynamicGoal(
+            return mod.AddContent(new DynamicGoal(
                 icon,
                 mod,
                 id,
@@ -33,7 +33,6 @@ namespace BingoBoardCore {
                 iconText,
                 modifierIcon
             ));
-            return true;
         }
 
         public static bool triggerGoal(string id, Player player) {

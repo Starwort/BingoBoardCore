@@ -11,6 +11,14 @@ namespace BingoBoardCore.Common {
 
         public override string localId => $"{origin.Name}.{originId}";
 
+        public override bool IsLoadingEnabled(Mod mod) {
+            return origin is not null;
+        }
+
+        public DynamicGoal() {
+            this.origin = null!;
+        }
+
         public DynamicGoal(
             Item icon, Mod mod, string id, int difficultyTier,
             string[] synergyTypes, Func<BingoMode, int, bool, bool>? enable = null,

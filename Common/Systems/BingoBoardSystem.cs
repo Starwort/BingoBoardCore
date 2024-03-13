@@ -94,7 +94,7 @@ namespace BingoBoardCore.Common.Systems {
         internal BoardUIState boardUI = new();
         internal UserInterface _boardUI = new();
         internal string mouseText = "";
-        internal static Dictionary<string, Goal> allGoals = new();
+        internal static IEnumerable<Goal> allGoals => ModContent.GetContent<Goal>();
         internal GoalState[]? activeGoals;
         internal bool isGameOver = false;
         internal BingoMode mode = BingoMode.Bingo;
@@ -146,17 +146,6 @@ namespace BingoBoardCore.Common.Systems {
                         Language.GetTextValue(text)
                     ).ToArray()), colour);
             }
-        }
-
-        public static void addGoals(IEnumerable<Goal> goals) {
-            foreach (var goal in goals) {
-                addGoal(goal);
-            }
-        }
-
-        public static void addGoal(Goal goal) {
-            Debug.Assert(!allGoals.ContainsKey(goal.id));
-            allGoals[goal.id] = goal;
         }
 
         public void triggerGoal(string goalId, Team team) {
@@ -353,7 +342,7 @@ namespace BingoBoardCore.Common.Systems {
                 teams.Add(player.team);
             }
 
-            var eligibleGoalGroups = allGoals.Values
+            var eligibleGoalGroups = allGoals
                 .Where(goal => goal.enable(mode, teams.Count, true))
                 .OrderBy(goal => goal.difficultyTier)
                 .GroupBy(goal => goal.difficultyTier)
@@ -439,6 +428,8 @@ namespace BingoBoardCore.Common.Systems {
             syncUI();
         }
 
+        internal Dictionary<string, Goal>? goalDict;
+
         public override void NetReceive(BinaryReader reader) {
             var goals = reader.ReadBoolean();
             boardUI.visible = goals;
@@ -448,9 +439,10 @@ namespace BingoBoardCore.Common.Systems {
             }
             this.activeGoals = new GoalState[25];
             this.mode = (BingoMode) reader.ReadByte();
+            goalDict ??= allGoals.ToDictionary(goal => goal.id);
             for (int i = 0; i < 25; i++) {
                 var goalId = reader.ReadString();
-                var state = new GoalState(allGoals[goalId]) {
+                var state = new GoalState(goalDict[goalId]) {
                     packedClear = reader.ReadByte()
                 };
                 this.activeGoals[i] = state;
@@ -648,10 +640,6 @@ namespace BingoBoardCore.Common.Systems {
                     return;
                 }
             }
-        }
-
-        public override void Unload() {
-            allGoals.Clear();
         }
     }
 }

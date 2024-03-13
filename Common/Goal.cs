@@ -65,9 +65,7 @@ namespace BingoBoardCore.Common {
         }
 
         protected sealed override void Register() {
-            if (this is not DynamicGoal) {
-                BingoBoardSystem.addGoal(this);
-            }
+            ModTypeLookup<Goal>.Register(this);
         }
     }
 }
