@@ -15,7 +15,7 @@ namespace BingoBoardCore.Common {
         //   to register an animation
         public abstract Item icon { get; }
         public string description => "Mods." + id;
-        protected readonly string localId;
+        public virtual string localId => this.GetType().Name;
         public string id => Mod is BingoBoardCore ? localId : Mod.Name + '.' + localId;
         // Difficulty tier, from 0 to 24
         public abstract int difficultyTier { get; }
@@ -25,8 +25,7 @@ namespace BingoBoardCore.Common {
         }
         public virtual string modifierText => "";
         public virtual Item? modifierIcon => null;
-        public Goal(string localId) {
-            this.localId = localId;
+        public Goal() {
             if (difficultyTier < 0) {
                 throw new ArgumentOutOfRangeException(nameof(difficultyTier), "Difficulty tier must not be negative");
             } else if (difficultyTier > 24) {
