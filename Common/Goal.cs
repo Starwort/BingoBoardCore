@@ -19,14 +19,19 @@ namespace BingoBoardCore.Common {
         public string id => Mod is BingoBoardCore ? localId : Mod.Name + '.' + localId;
         // Difficulty tier, from 0 to 24
         public abstract int difficultyTier { get; }
-        public abstract IList<string> synergyTypes { get; }
+        public virtual IList<string> synergyTypes => Array.Empty<string>();
         public virtual bool enable(BingoMode mode, int numPlayers, bool isSharedWorld) {
             return true;
         }
-        public abstract string modifierText { get; }
-        public abstract Item? modifierIcon { get; }
+        public virtual string modifierText => "";
+        public virtual Item? modifierIcon => null;
         public Goal(string localId) {
             this.localId = localId;
+            if (difficultyTier < 0) {
+                throw new ArgumentOutOfRangeException(nameof(difficultyTier), "Difficulty tier must not be negative");
+            } else if (difficultyTier > 24) {
+                throw new ArgumentOutOfRangeException(nameof(difficultyTier), "Difficulty tier too high (must be at most 24)");
+            }
         }
 
         internal static BingoBoardSystem? _system;
