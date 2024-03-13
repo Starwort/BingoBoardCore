@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Enums;
 using Terraria.ModLoader;
 
 namespace BingoBoardCore.Common {
@@ -28,9 +29,16 @@ namespace BingoBoardCore.Common {
             this.localId = localId;
         }
 
-        public virtual bool trigger() => false;
-        public virtual bool untrigger() => false;
-        public virtual string? reportProgress() => null;
+        internal static BingoBoardSystem? _system;
+        internal static BingoBoardSystem system = _system ??= ModContent.GetInstance<BingoBoardSystem>();
+
+        public void trigger(Team team) {
+            system.triggerGoal(this.id, team);
+        }
+        public void untrigger(Team team) {
+            system.untriggerGoal(this.id, team);
+        }
+        public virtual string? progressText() => null;
         public virtual void onGameStart() {}
 
         public void reportProgress(string progressText, params string[] substitutions) {

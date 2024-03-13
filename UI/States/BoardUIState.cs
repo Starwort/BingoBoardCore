@@ -6,6 +6,7 @@ using System.Diagnostics;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
+using Terraria.ModLoader;
 using Terraria.UI;
 
 namespace BingoBoardCore.UI.States {
@@ -14,14 +15,7 @@ namespace BingoBoardCore.UI.States {
         public bool visible = false;
         internal BoardSlot[] innerPanels;
 
-        internal static readonly Goal dummyGoal = new DynamicGoal(
-            new(ItemID.FallenStar),
-            "Mods.BingoBoardCore.Debug.Error",
-            "BingoBoardCore.Placeholder",
-            0,
-            System.Array.Empty<string>(),
-            (_, _, _) => false
-        );
+        internal Goal dummyGoal => ModContent.GetInstance<DynamicGoal>();
 
         public BoardUIState() : base() {
             boardPanel = new DraggableUIPanel();
