@@ -111,11 +111,11 @@ namespace BingoBoardCore.Commands {
                 caller.Reply("goal position ID must be in range [0,25)");
                 return;
             }
-            var system = ModContent.GetInstance<BingoBoardSystem>();
-            if (!system.allGoals.TryGetValue(args[1], out var goal)) {
+            if (!BingoBoardSystem.allGoals.TryGetValue(args[1], out var goal)) {
                 caller.Reply($"unknown goal {args[1]}");
                 return;
             }
+            var system = ModContent.GetInstance<BingoBoardSystem>();
             if (system.activeGoals is null) {
                 system.activeGoals = new GoalState[25];
                 for (var i = 0; i < 25; i++) {

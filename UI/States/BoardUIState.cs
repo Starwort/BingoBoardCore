@@ -14,13 +14,13 @@ namespace BingoBoardCore.UI.States {
         public bool visible = false;
         internal BoardSlot[] innerPanels;
 
-        internal static readonly Goal dummyGoal = new(
+        internal static readonly Goal dummyGoal = new DynamicGoal(
             new(ItemID.FallenStar),
             "Mods.BingoBoardCore.Debug.Error",
             "BingoBoardCore.Placeholder",
             0,
             System.Array.Empty<string>(),
-            (_, _) => false
+            (_, _, _) => false
         );
 
         public BoardUIState() : base() {

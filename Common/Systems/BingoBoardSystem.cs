@@ -94,7 +94,7 @@ namespace BingoBoardCore.Common.Systems {
         internal BoardUIState boardUI = new();
         internal UserInterface _boardUI = new();
         internal string mouseText = "";
-        internal Dictionary<string, Goal> allGoals = new();
+        internal static Dictionary<string, Goal> allGoals = new();
         internal GoalState[]? activeGoals;
         internal bool isGameOver = false;
         internal BingoMode mode = BingoMode.Bingo;
@@ -148,13 +148,13 @@ namespace BingoBoardCore.Common.Systems {
             }
         }
 
-        public void addGoals(IEnumerable<Goal> goals) {
+        public static void addGoals(IEnumerable<Goal> goals) {
             foreach (var goal in goals) {
                 addGoal(goal);
             }
         }
 
-        public void addGoal(Goal goal) {
+        public static void addGoal(Goal goal) {
             Debug.Assert(!allGoals.ContainsKey(goal.id));
             allGoals[goal.id] = goal;
         }
@@ -354,7 +354,7 @@ namespace BingoBoardCore.Common.Systems {
             }
 
             var eligibleGoalGroups = allGoals.Values
-                .Where(goal => goal.shouldInclude(mode, teams.Count))
+                .Where(goal => goal.enable(mode, teams.Count, true))
                 .OrderBy(goal => goal.difficultyTier)
                 .GroupBy(goal => goal.difficultyTier)
                 .Select(group => group.ToArray())
@@ -450,7 +450,7 @@ namespace BingoBoardCore.Common.Systems {
             this.mode = (BingoMode) reader.ReadByte();
             for (int i = 0; i < 25; i++) {
                 var goalId = reader.ReadString();
-                var state = new GoalState(this.allGoals[goalId]) {
+                var state = new GoalState(allGoals[goalId]) {
                     packedClear = reader.ReadByte()
                 };
                 this.activeGoals[i] = state;
@@ -648,6 +648,10 @@ namespace BingoBoardCore.Common.Systems {
                     return;
                 }
             }
+        }
+
+        public override void Unload() {
+            allGoals.Clear();
         }
     }
 }

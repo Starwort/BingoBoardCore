@@ -27,7 +27,7 @@ namespace BingoBoardCore.UI {
             Left.Set((index % 5) * (TextureAssets.InventoryBack9.Value.Width + 4) + 4, 0f);
             Width.Set(TextureAssets.InventoryBack9.Value.Width, 0f);
             Height.Set(TextureAssets.InventoryBack9.Value.Height, 0f);
-            iconText = new(goalState.goal.iconText);
+            iconText = new(goalState.goal.modifierText);
             iconText.Left.Set(4, 0);
             iconText.Top.Set(TextureAssets.InventoryBack9.Value.Height - 20, 0);
             iconText.DynamicallyScaleDownToWidth = true;
@@ -72,7 +72,7 @@ namespace BingoBoardCore.UI {
         internal static readonly Item markIcon = new(ItemID.FallenStar);
 
         public override void Update(GameTime gameTime) {
-            iconText.SetText(goalState.goal.iconText);
+            iconText.SetText(goalState.goal.modifierText);
             base.Update(gameTime);
         }
 
