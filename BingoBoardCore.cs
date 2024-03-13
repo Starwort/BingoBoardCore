@@ -22,10 +22,10 @@ namespace BingoBoardCore {
         // Re-export in case any content plugins want it more easily
         public static uint animationPeriod => ModContent.GetInstance<BingoBoardUIConfig>()?.animationPeriod ?? 30;
 
-        public static bool registerGoal(Item icon, string description, string id, int difficultyTier, string[] synergyTypes, Func<BingoMode, int, bool, bool>? enable = null, string iconText = "", Item? modifierIcon = null) {
+        public static bool registerGoal(Item icon, Mod mod, string id, int difficultyTier, string[] synergyTypes, Func<BingoMode, int, bool, bool>? enable = null, string iconText = "", Item? modifierIcon = null) {
             BingoBoardSystem.addGoal(new DynamicGoal(
                 icon,
-                description,
+                mod,
                 id,
                 difficultyTier,
                 synergyTypes,
