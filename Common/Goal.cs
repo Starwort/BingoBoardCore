@@ -40,8 +40,14 @@ namespace BingoBoardCore.Common {
         public void trigger(Team team) {
             system.triggerGoal(this.id, team);
         }
+        public void trigger(Player player) {
+            trigger((Team) player.team);
+        }
         public void untrigger(Team team) {
             system.untriggerGoal(this.id, team);
+        }
+        public void untrigger(Player player) {
+            untrigger((Team) player.team);
         }
         public virtual string? progressText() => null;
         public virtual void onGameStart() {}
