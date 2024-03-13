@@ -14,6 +14,8 @@ namespace BingoBoardCore.Common {
         // - Use BingoBoardCore[.IconAnimationSystem].register{Rand,Cycle}Animation()
         //   to register an animation
         public abstract Item icon { get; }
+        internal Item? iconCache;
+        internal Item cachedIcon { get => iconCache ??= icon; }
         public string description => "Mods." + id;
         public virtual string localId => this.GetType().Name;
         public string id => Mod is BingoBoardCore ? localId : Mod.Name + '.' + localId;

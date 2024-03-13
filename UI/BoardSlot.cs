@@ -59,7 +59,7 @@ namespace BingoBoardCore.UI {
             }
             var chosenColour = possibleColours.Count == 0 ? new Color(73, 94, 171) : possibleColours[(int) ((Main.GameUpdateCount / 60) % possibleColours.Count)];
             drawRectangle(spriteBatch, this.GetDimensions().ToRectangle(), chosenColour);
-            Main.DrawItemIcon(spriteBatch, goalState.goal.icon, origin, Color.White, this.GetDimensions().Width - 8);
+            Main.DrawItemIcon(spriteBatch, goalState.goal.cachedIcon, origin, Color.White, this.GetDimensions().Width - 8);
             if (this.isMarked && (possibleColours.Count == 0 || system.mode != BingoMode.Lockout)) {
                 Main.DrawItemIcon(spriteBatch, markIcon, origin + markOffset, Color.White, 16);
             }
