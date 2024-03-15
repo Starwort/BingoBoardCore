@@ -51,7 +51,7 @@ namespace BingoBoardCore.Common {
             untrigger((Team) player.team);
         }
         public virtual string? progressText() => null;
-        public virtual void onGameStart() {}
+        public virtual void onGameStart(Player player) {}
 
         // Report progress towards this goal, if this goal is present.
         // Localisation keys are expected to be of the format Mods.YourMod.Progress.GoalName

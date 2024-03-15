@@ -401,6 +401,13 @@ namespace BingoBoardCore.Common.Systems {
 
             announce(Color.White, "Mods.BingoBoardCore.MatchStarted", $"Mods.BingoBoardCore.MatchType.{(int) mode}");
             sync();
+            foreach (var goal in activeGoals) {
+                foreach (var player in Main.player) {
+                    if (player.active) {
+                        goal.goal.onGameStart(player);
+                    }
+                }
+            }
             foreach (var gameStartCallback in gameStartCallbacks) {
                 gameStartCallback();
             }
