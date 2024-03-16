@@ -39,6 +39,14 @@ namespace BingoBoardCore.AnimationHelpers {
             return registerCycleAnimation(itemIds.ToArray());
         }
 
+        public static Item registerCycleAnimation(params Item[] items) {
+            return registerCycleAnimation(items.Select(item => item.type));
+        }
+
+        public static Item registerCycleAnimation(IEnumerable<Item> items) {
+            return registerCycleAnimation(items.Select(item => item.type));
+        }
+
         public static Item registerRandAnimation(params int[] itemIds) {
             Item rv = new(itemIds[0]);
             randAnimations.Add((rv, itemIds));
@@ -47,6 +55,14 @@ namespace BingoBoardCore.AnimationHelpers {
 
         public static Item registerRandAnimation(IEnumerable<int> itemIds) {
             return registerRandAnimation(itemIds.ToArray());
+        }
+
+        public static Item registerRandAnimation(params Item[] items) {
+            return registerRandAnimation(items.Select(item => item.type));
+        }
+
+        public static Item registerRandAnimation(IEnumerable<Item> items) {
+            return registerRandAnimation(items.Select(item => item.type));
         }
     }
 }
