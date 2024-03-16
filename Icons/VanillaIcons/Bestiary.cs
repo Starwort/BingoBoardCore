@@ -1,8 +1,7 @@
 ﻿using BingoBoardCore.AnimationHelpers;
-using System.Diagnostics.Metrics;
-using System.IO;
 using Terraria;
 using Terraria.ModLoader;
+
 namespace BingoBoardCore.Icons {
     public partial class VanillaIcons {
         public class Bestiary : ModItem {
