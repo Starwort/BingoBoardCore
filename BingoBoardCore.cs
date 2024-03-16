@@ -3,7 +3,7 @@ using BingoBoardCore.AnimationHelpers;
 using BingoBoardCore.Common;
 using BingoBoardCore.Common.Configs;
 using BingoBoardCore.Common.Systems;
-using BingoBoardCore.VanillaUiIcons;
+using BingoBoardCore.Icons;
 using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
@@ -154,7 +154,7 @@ namespace BingoBoardCore {
         private static Item? _dieIcon;
         public static Item dieIcon {
             get {
-                _dieIcon ??= ModContent.GetInstance<Die>().Item;
+                _dieIcon ??= ModContent.GetInstance<VanillaIcons.Die>().Item;
                 return _dieIcon;
             }
         }
@@ -162,7 +162,7 @@ namespace BingoBoardCore {
         private static Item? _disallowIcon;
         public static Item disallowIcon {
             get {
-                _disallowIcon ??= ModContent.GetInstance<Disallow>().Item;
+                _disallowIcon ??= ModContent.GetInstance<VanillaIcons.Disallow>().Item;
                 return _disallowIcon;
             }
         }
