@@ -3,7 +3,7 @@ using BingoBoardCore.AnimationHelpers;
 using BingoBoardCore.Common;
 using BingoBoardCore.Common.Configs;
 using BingoBoardCore.Common.Systems;
-using BingoBoardCore.Icons;
+using BingoBoardCore.VanillaUiIcons;
 using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
