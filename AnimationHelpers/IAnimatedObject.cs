@@ -3,7 +3,7 @@
 namespace BingoBoardCore.AnimationHelpers {
     public abstract class IAnimatedObject : ModItem {
         public IAnimatedObject() {
-            IconAnimationSystem.animatedObjects.Add(Type, this);
+            IconAnimationSystem.animatedObjects.Add(this);
         }
 
         // Update the animation. The frame parameter corresponds

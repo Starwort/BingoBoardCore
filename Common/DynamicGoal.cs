@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace BingoBoardCore.Common {
@@ -12,13 +13,13 @@ namespace BingoBoardCore.Common {
         public override string localId => $"{origin.Name}.{originId}";
 
         public override bool IsLoadingEnabled(Mod mod) {
-            return origin is not null;
+            return origin is not BingoBoardCore;
         }
 
         public DynamicGoal() {
-            this.origin = null!;
+            this.origin = Mod;
             this.originId = "";
-            this.icon = null!;
+            this.icon = new(ItemID.Spaghetti); // why not
             this.synergyTypes = base.synergyTypes;
             this.modifierIcon = base.modifierIcon;
             this.modifierText = base.modifierText;

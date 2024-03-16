@@ -7,9 +7,10 @@ namespace BingoBoardCore.Icons {
             private bool on;
             public override string Texture => on
                 ? "Terraria/Images/UI/Bestiary/Icon_Rank_Light"
-                : "Terraria/Images/UI/Bestiary/Icon_Rank_Dark";
+                : "Terraria/Images/UI/Bestiary/Icon_Rank_Dim";
             public static Item Off { get; internal set; } = null!;
             public static Item On { get; internal set; } = null!;
+            public override string Name => base.Name + (on ? "On" : "Off");
             public Star() {
                 on = false;
                 Off = this.Item;
