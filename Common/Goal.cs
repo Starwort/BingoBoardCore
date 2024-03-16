@@ -17,7 +17,7 @@ namespace BingoBoardCore.Common {
         internal Item? iconCache;
         internal Item cachedIcon { get => iconCache ??= icon; }
         public string description => "Mods." + id;
-        public virtual string localId => this.GetType().Name;
+        public virtual string localId => this.GetType().Name.Replace('_', '.');
         public string id => Mod is BingoBoardCore ? localId : Mod.Name + '.' + localId;
         // Difficulty tier, from 0 to 24
         public abstract int difficultyTier { get; }
