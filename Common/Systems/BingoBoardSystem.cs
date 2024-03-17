@@ -90,6 +90,12 @@ namespace BingoBoardCore.Common.Systems {
         Lockout,
     }
 
+    public enum Length {
+        Short,
+        Normal,
+        Long
+    }
+
     public class BingoBoardSystem : ModSystem {
         internal BoardUIState boardUI = new();
         internal UserInterface _boardUI = new();
@@ -100,6 +106,7 @@ namespace BingoBoardCore.Common.Systems {
         internal BingoMode mode = BingoMode.Bingo;
 
         internal List<Action> gameStartCallbacks = new();
+        internal List<Action> gameEndCallbacks = new();
 
         public override void Load() {
             if (!Main.dedServ) {
@@ -260,7 +267,7 @@ namespace BingoBoardCore.Common.Systems {
             new[] {0, 6, 12, 18, 20, 21, 22, 23, 19, 14, 9, 4},
         };
 
-        static int difficulty(int i, int seed) {
+        static int difficulty(int i, int seed, Length length) {
             int num3 = seed % 1000;
             int rem8 = num3 % 8;
             int rem4 = rem8 / 2;
@@ -295,11 +302,11 @@ namespace BingoBoardCore.Common.Systems {
             int e1 = table1[(3 * x + y) % 5];
             int value = 5 * e5 + e1;
 
-            //if (MODE == "short") {
-            //    value = value / 2;
-            //} else if (MODE == "long") {
-            //    value = (value + 25) / 2;
-            //}
+            if (length == Length.Short) {
+                value = value / 2;
+            } else if (length == Length.Long) {
+                value = (value + 25) / 2;
+            }
 
             return value;
         }
@@ -329,7 +336,7 @@ namespace BingoBoardCore.Common.Systems {
             return synergy;
         }
 
-        public void generateBingoBoard(BingoMode mode) {
+        public void generateBingoBoard(BingoMode mode, Length length = Length.Normal) {
             activeGoals = new GoalState[25];
             this.mode = mode;
             this.isGameOver = false;
@@ -361,7 +368,7 @@ namespace BingoBoardCore.Common.Systems {
 
             var boardDifficulties = new int[25];
             for (int i = 0; i < 25; i++) {
-                boardDifficulties[i] = difficulty(i, seed);
+                boardDifficulties[i] = difficulty(i, seed, length);
             }
 
             var boardTypes = new IList<string>[25];
@@ -547,6 +554,16 @@ namespace BingoBoardCore.Common.Systems {
         internal void endGame(Team team) {
             announce(Main.teamColor[(int) team], "Mods.BingoBoardCore.GameEnd", teams[(int) team]);
             isGameOver = true;
+            foreach (var goal in activeGoals!) {
+                foreach (var player in Main.player) {
+                    if (player.active) {
+                        goal.goal.onGameEnd(player);
+                    }
+                }
+            }
+            foreach (var onGameEnd in gameEndCallbacks) {
+                onGameEnd();
+            }
         }
 
         internal void checkBingoEnd() {

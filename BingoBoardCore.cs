@@ -50,8 +50,15 @@ namespace BingoBoardCore {
         }
 
         // Useful for 'never do X' goals, to trigger them at the beginning of the game
+        // or for setting up potentially-expensive trackers
         public static bool onGameStart(Action callback) {
             ModContent.GetInstance<BingoBoardSystem>().gameStartCallbacks.Add(callback);
+            return true;
+        }
+
+        // Useful for cleaning up potentially-expensive trackers registered during onGameStart
+        public static bool onGameEnd(Action callback) {
+            ModContent.GetInstance<BingoBoardSystem>().gameEndCallbacks.Add(callback);
             return true;
         }
 
@@ -144,6 +151,7 @@ namespace BingoBoardCore {
                 nameof(triggerGoal),
                 nameof(untriggerGoal),
                 nameof(onGameStart),
+                nameof(onGameEnd),
                 nameof(reportProgress),
                 nameof(reportBadProgress),
                 nameof(registerCycleAnimation),
