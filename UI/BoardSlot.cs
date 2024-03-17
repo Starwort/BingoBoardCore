@@ -92,7 +92,7 @@ namespace BingoBoardCore.UI {
         public override void MouseOver(UIMouseEvent evt) {
             var system = ModContent.GetInstance<BingoBoardSystem>();
             if (system.boardUI.visible) {
-                var extraInfo = goalState.goal.progressText();
+                var extraInfo = goalState.goal.progressTextFor(Main.player[Main.myPlayer]);
                 system.mouseText = Language.GetTextValue(goalState.goal.description)
                     + (extraInfo is null ? "" : $"\n{extraInfo}");
             }

@@ -50,7 +50,17 @@ namespace BingoBoardCore.Common {
         public void untrigger(Player player) {
             untrigger((Team) player.team);
         }
+        [Obsolete("progressText() is deprecated, implement progressTextFor instead")]
         public virtual string? progressText() => null;
+        public virtual string? progressTextFor(Player player) {
+#pragma warning disable CS0618
+            var result = progressText();
+#pragma warning restore CS0618
+            if (result is not null) {
+                Console.WriteLine("Warning: Goal is still using deprecated progressText. Please migrate your plugin.");
+            }
+            return result;
+        }
         public virtual void onGameStart(Player player) {}
         public virtual void onGameEnd(Player player) {}
 
