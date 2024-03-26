@@ -12,6 +12,7 @@ using System.Linq;
 using Terraria.Chat;
 using System;
 using Terraria.Enums;
+using BingoBoardCore.Trackers;
 
 namespace BingoBoardCore.Common.Systems {
     internal class GoalState {
@@ -411,6 +412,7 @@ namespace BingoBoardCore.Common.Systems {
             foreach (var goal in activeGoals) {
                 foreach (var player in Main.player) {
                     if (player.active) {
+                        player.GetModPlayer<ObtainedItemTrackerImpl>().reset();
                         goal.goal.onGameStart(player);
                     }
                 }
