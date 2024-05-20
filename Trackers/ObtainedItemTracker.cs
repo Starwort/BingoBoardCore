@@ -109,7 +109,7 @@ namespace BingoBoardCore.Trackers {
         /// <param name="player">The <see cref="Player"/> owning the value</param>
         /// <param name="createDefault">A factory to create the value if it doesn't exist yet (always true on first call)</param>
         /// <returns>The storage value</returns>
-        private T storage<T>(Player player, Func<T> createDefault) {
+        protected T storage<T>(Player player, Func<T> createDefault) {
             return player.GetModPlayer<ObtainedItemTrackerImpl>().storage(this.GetType(), createDefault);
         }
         /// <summary>
@@ -124,7 +124,7 @@ namespace BingoBoardCore.Trackers {
         /// <typeparam name="T">The type of storage to use</typeparam>
         /// <param name="player">The <see cref="Player"/> owning the value</param>
         /// <returns>The storage value</returns>
-        private T storage<T>(Player player) {
+        protected T storage<T>(Player player) {
             return player.GetModPlayer<ObtainedItemTrackerImpl>().storage<T>(this.GetType());
         }
 
