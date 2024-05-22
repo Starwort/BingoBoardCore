@@ -50,29 +50,25 @@ namespace BingoBoardCore.Common {
         public void untrigger(Player player) {
             untrigger((Team) player.team);
         }
-        [Obsolete("progressText() is deprecated, implement progressTextFor instead")]
-        public virtual string? progressText() => null;
         public virtual string? progressTextFor(Player player) {
-#pragma warning disable CS0618
-            var result = progressText();
-#pragma warning restore CS0618
-            if (result is not null) {
-                Console.WriteLine("Warning: Goal is still using deprecated progressText. Please migrate your plugin.");
-            }
-            return result;
+            return null;
         }
         public virtual void onGameStart(Player player) {}
         public virtual void onGameEnd(Player player) {}
 
         // Report progress towards this goal, if this goal is present.
         // Localisation keys are expected to be of the format Mods.YourMod.Progress.GoalName
-        public void reportProgress(params string[] substitutions) {
-            BingoBoardCore.reportProgress(this.id, "Mods." + this.Mod.Name + ".Progress." + this.localId, substitutions);
+        public void reportProgress(Player player, params string[] substitutions) {
+            if (player.whoAmI == Main.myPlayer) {
+                BingoBoardCore.reportProgress(this.id, "Mods." + this.Mod.Name + ".Progress." + this.localId, substitutions);
+            }
         }
         // Report progress towards this goal, if this goal is present.
         // Localisation keys are expected to be of the format Mods.YourMod.BadProgress.GoalName
-        public void reportBadProgress(params string[] substitutions) {
-            BingoBoardCore.reportBadProgress(this.id, "Mods." + this.Mod.Name + ".BadProgress." + this.localId, substitutions);
+        public void reportBadProgress(Player player, params string[] substitutions) {
+            if (player.whoAmI == Main.myPlayer) {
+                BingoBoardCore.reportBadProgress(this.id, "Mods." + this.Mod.Name + ".BadProgress." + this.localId, substitutions);
+            }
         }
 
         protected sealed override void Register() {
