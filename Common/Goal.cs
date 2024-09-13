@@ -21,7 +21,7 @@ namespace BingoBoardCore.Common {
         public string id => Mod is BingoBoardCore ? localId : Mod.Name + '.' + localId;
         // Difficulty tier, from 0 to 24
         public abstract int difficultyTier { get; }
-        public virtual IList<string> synergyTypes => Array.Empty<string>();
+        public virtual IList<string> synergyTypes => [];
         public virtual bool enable(BingoMode mode, int numPlayers, bool isSharedWorld) {
             return true;
         }
