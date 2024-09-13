@@ -63,7 +63,12 @@ namespace BingoBoardCore.UI {
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch) {
-            drawRectangle(spriteBatch, this.GetDimensions().ToRectangle(), new Color(73, 94, 171));
+            spriteBatch.Draw(
+                (Texture2D) BingoBoardSystem.board,
+                this.GetDimensions().ToRectangle(),
+                Color.White
+            );
+            //drawRectangle(spriteBatch, this.GetDimensions().ToRectangle(), new Color(73, 94, 171));
         }
     }
 }

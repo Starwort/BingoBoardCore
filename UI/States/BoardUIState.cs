@@ -15,15 +15,15 @@ namespace BingoBoardCore.UI.States {
         public bool visible = false;
         internal BoardSlot[] innerPanels;
 
-        internal Goal dummyGoal => ModContent.GetInstance<DynamicGoal>();
+        internal Goal dummyGoal => new DynamicGoal();
 
         public BoardUIState() : base() {
             boardPanel = new DraggableUIPanel();
             innerPanels = new BoardSlot[25];
             if (!Main.dedServ) {
                 boardPanel.SetPadding(0);
-                boardPanel.Width.Set((TextureAssets.InventoryBack9.Value.Width + 4) * 5 + 4, 0f);
-                boardPanel.Height.Set((TextureAssets.InventoryBack9.Value.Height + 4) * 5 + 4, 0f);
+                boardPanel.Width.Set(288, 0f);
+                boardPanel.Height.Set(288, 0f);
                 var parentSpace = GetDimensions().ToRectangle();
                 boardPanel.Left.Pixels = 0;
                 boardPanel.Top.Pixels = parentSpace.Bottom - boardPanel.Height.Pixels;

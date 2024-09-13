@@ -13,14 +13,12 @@ using Terraria.Chat;
 using System;
 using Terraria.Enums;
 using BingoBoardCore.Trackers;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 
 namespace BingoBoardCore.Common.Systems {
-    internal class GoalState {
-        public GoalState(Goal goal) {
-            this.goal = goal;
-        }
-
-        public Goal goal;
+    internal class GoalState(Goal goal) {
+        public Goal goal = goal;
         public byte packedClear = 0;
         public bool whiteCleared {
             get => (packedClear & (1 << 0)) != 0;
@@ -106,11 +104,18 @@ namespace BingoBoardCore.Common.Systems {
         internal bool isGameOver = false;
         internal BingoMode mode = BingoMode.Bingo;
 
-        internal List<Action> gameStartCallbacks = new();
-        internal List<Action> gameEndCallbacks = new();
+        internal List<Action> gameStartCallbacks = [];
+        internal List<Action> gameEndCallbacks = [];
+        internal static Asset<Texture2D>[] slot = [];
+        internal static Asset<Texture2D> board = null!;
 
         public override void Load() {
             if (!Main.dedServ) {
+                slot = new Asset<Texture2D>[64];
+                for (int i = 0; i< 64; i++) {
+                    slot[i] = ModContent.Request<Texture2D>($"BingoBoardCore/UI/goal-box{i}");
+                }
+                board = ModContent.Request<Texture2D>("BingoBoardCore/UI/board");
                 boardUI = new BoardUIState();
                 boardUI.Activate();
                 _boardUI = new UserInterface();
@@ -240,33 +245,33 @@ namespace BingoBoardCore.Common.Systems {
         }
 
         // from https://github.com/kbuzsaki/bingosync/blob/main/bingosync-app/generators/generator_bases/srl_generator_v5.js
-        static readonly int[][] lineChecklist = new[] {
-            new[] {1, 2, 3, 4, 5, 10, 15, 20, 6, 12, 18, 24},
-            new[] {0, 2, 3, 4, 6, 11, 16, 21},
-            new[] {0, 1, 3, 4, 7, 12, 17, 22},
-            new[] {0, 1, 2, 4, 8, 13, 18, 23},
-            new[] {0, 1, 2, 3, 8, 12, 16, 20, 9, 14, 19, 24},
-            new[] {0, 10, 15, 20, 6, 7, 8, 9},
-            new[] {0, 12, 18, 24, 5, 7, 8, 9, 1, 11, 16, 21},
-            new[] {5, 6, 8, 9, 2, 12, 17, 22},
-            new[] {4, 12, 16, 20, 9, 7, 6, 5, 3, 13, 18, 23},
-            new[] {4, 14, 19, 24, 8, 7, 6, 5},
-            new[] {0, 5, 15, 20, 11, 12, 13, 14},
-            new[] {1, 6, 16, 21, 10, 12, 13, 14},
-            new[] {0, 6, 12, 18, 24, 20, 16, 8, 4, 2, 7, 17, 22, 10, 11, 13, 14},
-            new[] {3, 8, 18, 23, 10, 11, 12, 14},
-            new[] {4, 9, 19, 24, 10, 11, 12, 13},
-            new[] {0, 5, 10, 20, 16, 17, 18, 19},
-            new[] {15, 17, 18, 19, 1, 6, 11, 21, 20, 12, 8, 4},
-            new[] {15, 16, 18, 19, 2, 7, 12, 22},
-            new[] {15, 16, 17, 19, 23, 13, 8, 3, 24, 12, 6, 0},
-            new[] {4, 9, 14, 24, 15, 16, 17, 18},
-            new[] {0, 5, 10, 15, 16, 12, 8, 4, 21, 22, 23, 24},
-            new[] {20, 22, 23, 24, 1, 6, 11, 16},
-            new[] {2, 7, 12, 17, 20, 21, 23, 24},
-            new[] {20, 21, 22, 24, 3, 8, 13, 18},
-            new[] {0, 6, 12, 18, 20, 21, 22, 23, 19, 14, 9, 4},
-        };
+        static readonly int[][] lineChecklist = [
+            [1, 2, 3, 4, 5, 10, 15, 20, 6, 12, 18, 24],
+            [0, 2, 3, 4, 6, 11, 16, 21],
+            [0, 1, 3, 4, 7, 12, 17, 22],
+            [0, 1, 2, 4, 8, 13, 18, 23],
+            [0, 1, 2, 3, 8, 12, 16, 20, 9, 14, 19, 24],
+            [0, 10, 15, 20, 6, 7, 8, 9],
+            [0, 12, 18, 24, 5, 7, 8, 9, 1, 11, 16, 21],
+            [5, 6, 8, 9, 2, 12, 17, 22],
+            [4, 12, 16, 20, 9, 7, 6, 5, 3, 13, 18, 23],
+            [4, 14, 19, 24, 8, 7, 6, 5],
+            [0, 5, 15, 20, 11, 12, 13, 14],
+            [1, 6, 16, 21, 10, 12, 13, 14],
+            [0, 6, 12, 18, 24, 20, 16, 8, 4, 2, 7, 17, 22, 10, 11, 13, 14],
+            [3, 8, 18, 23, 10, 11, 12, 14],
+            [4, 9, 19, 24, 10, 11, 12, 13],
+            [0, 5, 10, 20, 16, 17, 18, 19],
+            [15, 17, 18, 19, 1, 6, 11, 21, 20, 12, 8, 4],
+            [15, 16, 18, 19, 2, 7, 12, 22],
+            [15, 16, 17, 19, 23, 13, 8, 3, 24, 12, 6, 0],
+            [4, 9, 14, 24, 15, 16, 17, 18],
+            [0, 5, 10, 15, 16, 12, 8, 4, 21, 22, 23, 24],
+            [20, 22, 23, 24, 1, 6, 11, 16],
+            [2, 7, 12, 17, 20, 21, 23, 24],
+            [20, 21, 22, 24, 3, 8, 13, 18],
+            [0, 6, 12, 18, 20, 21, 22, 23, 19, 14, 9, 4],
+        ];
 
         static int difficulty(int i, int seed, Length length) {
             int num3 = seed % 1000;
@@ -304,7 +309,7 @@ namespace BingoBoardCore.Common.Systems {
             int value = 5 * e5 + e1;
 
             if (length == Length.Short) {
-                value = value / 2;
+                value /= 2;
             } else if (length == Length.Long) {
                 value = (value + 25) / 2;
             }
@@ -359,11 +364,12 @@ namespace BingoBoardCore.Common.Systems {
 
             var eligibleGoals = new Goal[25][];
             for (int i = 0; i < 25; i++) {
-                eligibleGoals[i] = eligibleGoalGroups.SingleOrDefault(group => group[0].difficultyTier == i)?.ToArray() ?? Array.Empty<Goal>();
+                eligibleGoals[i] = eligibleGoalGroups.SingleOrDefault(
+                    group => group[0].difficultyTier == i
+                )?.ToArray() ?? [];
             }
 
             var seed = (new Random()).Next();
-            Main.NewText($"generating board with seed {seed}");
 
             var rand = new Random(seed);
 
@@ -510,14 +516,14 @@ namespace BingoBoardCore.Common.Systems {
             throw new ArgumentOutOfRangeException(nameof(teamMask), "Must be set");
         }
 
-        static readonly string[] teams = new[] {
+        static readonly string[] teams = [
             "Mods.BingoBoardCore.Team.White",
             "Mods.BingoBoardCore.Team.Red",
             "Mods.BingoBoardCore.Team.Green",
             "Mods.BingoBoardCore.Team.Blue",
             "Mods.BingoBoardCore.Team.Yellow",
             "Mods.BingoBoardCore.Team.Pink",
-        };
+        ];
 
         // Get the bitmask for row Y of goals
         internal static byte checkRow(GoalState[] activeGoals, int y) {
@@ -667,5 +673,5 @@ namespace BingoBoardCore.Common.Systems {
                 }
             }
         }
-    }
+}
 }
