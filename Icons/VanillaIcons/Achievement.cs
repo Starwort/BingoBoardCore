@@ -244,9 +244,10 @@ namespace BingoBoardCore.Icons {
 
             public override string Name => $"AchievementIcon/{iconPosition.Item1}-{iconPosition.Item2}";
 
+            public override bool IsLoadingEnabled(Mod mod) => iconPosition.Item1 >= 0;
+
             public Achievement() {
-                iconPosition = (0, 0);
-                Timber = this.Item;
+                iconPosition = (-1, 0);
             }
 
             public Achievement((int, int) position) {
@@ -269,9 +270,7 @@ namespace BingoBoardCore.Icons {
                     mod.AddContent(lockedIcon);
                     return (icon.Item, lockedIcon.Item);
                 }
-                Achievement timberLocked = new((8, 0));
-                mod.AddContent(timberLocked);
-                Locked.Timber = timberLocked.Item;
+                (Timber, Locked.Timber) = add(0, 0);
                 (NoHobo, Locked.NoHobo) = add(1, 0);
                 (StopHammerTime, Locked.StopHammerTime) = add(2, 0);
                 (HeartBreaker, Locked.HeartBreaker) = add(3, 0);

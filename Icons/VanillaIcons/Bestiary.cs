@@ -84,9 +84,10 @@ namespace BingoBoardCore.Icons {
 
             public override string Name => $"BestiaryIcon/{iconPosition.Item1}-{iconPosition.Item2}";
 
+            public override bool IsLoadingEnabled(Mod mod) => iconPosition.Item1 >= 0;
+
             public Bestiary() {
-                iconPosition = (0, 0);
-                Forest = this.Item;
+                iconPosition = (-1, 0);
             }
 
             public Bestiary((int, int) position) {
@@ -109,6 +110,7 @@ namespace BingoBoardCore.Icons {
                     );
                     return icon.Item;
                 }
+                Forest = add(0, 0);
                 Underground = add(1, 0);
                 Caverns = add(2, 0);
                 Desert = add(3, 0);
