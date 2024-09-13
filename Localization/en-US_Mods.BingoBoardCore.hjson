@@ -1531,4 +1531,8 @@ Items: {
 		DisplayName: "{$Debug.Error}"
 		Tooltip: ""
 	}
+
+	Starunloaded.DisplayName: "{$Debug.Error}"
+	AchievementIcon/-1-0.DisplayName: "{$Debug.Error}"
+	BestiaryIcon/-1-0.DisplayName: "{$Debug.Error}"
 }
