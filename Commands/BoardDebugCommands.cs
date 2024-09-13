@@ -1,4 +1,5 @@
-﻿using BingoBoardCore.Common.Systems;
+﻿using BingoBoardCore.Common;
+using BingoBoardCore.Common.Systems;
 using System;
 using System.Linq;
 using Terraria.Enums;
@@ -92,6 +93,24 @@ namespace BingoBoardCore.Commands {
                     caller.Reply("team colour must be one of red,green,blue,yellow,pink,white");
                     break;
             }
+            system.sync();
+        }
+    }
+    internal class ForceBoardDisplay : ModCommand {
+        public override string Command => "showboard";
+
+        public override CommandType Type => CommandType.World;
+
+        public override void Action(CommandCaller caller, string input, string[] args) {
+            var system = ModContent.GetInstance<BingoBoardSystem>();
+            if (system.activeGoals is null) {
+                system.activeGoals = new GoalState[25];
+                Goal goal = BingoBoardSystem.allGoals.Where(g => (g is not DynamicGoal) || (g is DynamicGoal d && d.origin != null)).First();
+                for (int i = 0; i < 25; i++) {
+                    system.activeGoals[i] = new(goal);
+                }
+            }
+            system.isGameOver = false;
             system.sync();
         }
     }
