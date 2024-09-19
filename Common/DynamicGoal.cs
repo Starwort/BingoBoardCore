@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 namespace BingoBoardCore.Common {
     internal class DynamicGoal : Goal {
         internal Mod origin;
-        private string originId;
+        private readonly string originId;
 
         public override string localId => $"{origin.Name}.{originId}";
 
@@ -30,9 +30,7 @@ namespace BingoBoardCore.Common {
             string[] synergyTypes, Func<BingoMode, int, bool, bool>? enable = null,
             string iconText = "", Item? modifierIcon = null
         ) {
-            if (mod == null) {
-                throw new ArgumentNullException(nameof(mod));
-            }
+            ArgumentNullException.ThrowIfNull(mod);
             this.origin = mod;
             this.originId = id;
             this.icon = icon;
