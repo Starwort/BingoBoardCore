@@ -6,8 +6,8 @@ using Terraria.ModLoader;
 
 namespace BingoBoardCore.Trackers {
     internal class ObtainedItemTrackerImpl : ModPlayer {
-        internal static readonly List<ObtainedItemTracker> trackers = new();
-        internal List<ObtainedItemTracker> myTrackers = new();
+        internal static readonly List<ObtainedItemTracker> trackers = [];
+        internal List<ObtainedItemTracker> myTrackers = [];
 
         public override void Initialize() {
             myTrackers = (
@@ -16,7 +16,7 @@ namespace BingoBoardCore.Trackers {
             ).ToList();
         }
 
-        internal HashSet<int> usedAccs = new();
+        internal HashSet<int> usedAccs = [];
         internal void onEquipAccessory(Item acc) {
             if (usedAccs.Contains(acc.type)) {
                 return;
@@ -32,7 +32,7 @@ namespace BingoBoardCore.Trackers {
                 tracker.onAnyObtain(itm);
             }
         }
-        internal HashSet<int> obtainedItems = new();
+        internal HashSet<int> obtainedItems = [];
         internal void onAnyObtain(Item itm) {
             if (obtainedItems.Contains(itm.type)) {
                 return;

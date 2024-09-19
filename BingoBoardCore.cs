@@ -1,4 +1,3 @@
-global using static BingoBoardCore.Util.DrawingHelper;
 using BingoBoardCore.AnimationHelpers;
 using BingoBoardCore.Common;
 using BingoBoardCore.Common.Configs;
@@ -146,7 +145,7 @@ namespace BingoBoardCore {
         }
 
         public override object Call(params object[] args) {
-            return dispatch(args, new[] {
+            return dispatch(args, [
                 nameof(registerGoal),
                 nameof(triggerGoal),
                 nameof(untriggerGoal),
@@ -156,7 +155,7 @@ namespace BingoBoardCore {
                 nameof(reportBadProgress),
                 nameof(registerCycleAnimation),
                 nameof(registerRandAnimation),
-            });
+            ]);
         }
 
         private static Item? _dieIcon;

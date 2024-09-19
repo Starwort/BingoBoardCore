@@ -1,10 +1,6 @@
-﻿using Terraria.ModLoader;
-using Terraria;
+﻿using Terraria;
 
 namespace BingoBoardCore.Trackers {
-    public abstract class PlayerTracker : ModPlayer {
-        public override string Name => this.GetType().AssemblyQualifiedName ?? this.GetType().Name;
-    }
     public abstract class PlayerAttackTracker : PlayerTracker {
         public sealed override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
             processHitNPC(target, hit);
